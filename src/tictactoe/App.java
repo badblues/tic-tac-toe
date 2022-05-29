@@ -8,12 +8,14 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;;
 //TODO: view +++
 //TODO: local play +++
-//TODO: menu and switching scenes
-//TODP: background play on menu
-//TODO: game options
-//TODO: server connecting
+//TODO: menu and switching scenes +++
+//TODO: background play on menu +++
+//TODO: server connecting  +++
 //TODO: choosing who to play with
+//TODO: game options 3x3 4x4 5x5
 //TODO: spectator mode
+//TODO: leaderboards
+//TODO: redesign
 
 public class App extends Application {
 

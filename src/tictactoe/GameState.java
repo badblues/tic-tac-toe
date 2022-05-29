@@ -31,7 +31,7 @@ public class GameState {
     }
 
     public int gameWinner() {
-        //returns 0 if none
+        //returns 0 if none, 3 if draw
         int res = 0;
         for (int i = 0; i < 8; i++) {
             ArrayList<Integer> comb = new ArrayList<>();
@@ -53,6 +53,8 @@ public class GameState {
                 break;
             }
         }
+        if (res == 0 && !board.contains(0))
+            res = 3;
         return res;
     }
 

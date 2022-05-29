@@ -44,12 +44,34 @@
             <Button fx:id="button8" mnemonicParsing="false" onAction="#buttonPress" opacity="0.0" prefHeight="165.0" prefWidth="165.0" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <Button fx:id="resetButton" layoutX="252.0" layoutY="481.0" mnemonicParsing="false" onAction="#resetGame" prefHeight="74.0" prefWidth="194.0" text="RESET" />
-      <Label fx:id="label" layoutX="21.0" layoutY="55.0" prefHeight="97.0" prefWidth="666.0" text="TIC-TAC-TOE" textAlignment="CENTER">
+      <Button fx:id="resetButton" layoutX="169.0" layoutY="209.0" mnemonicParsing="false" onAction="#resetGame" prefHeight="48.0" prefWidth="194.0" text="RESET" />
+      <Button layoutX="169.0" layoutY="284.0" mnemonicParsing="false" onAction="#openMenu" prefHeight="48.0" prefWidth="194.0" text="MENU" />
+      <Label fx:id="label" layoutX="700.0" prefHeight="97.0" prefWidth="666.0" text="TIC-TAC-TOE" textAlignment="CENTER">
          <font>
-            <Font name="Comic Sans MS" size="69.0" />
+            <Font name="Comic Sans MS" size="46.0" />
          </font>
       </Label>
-      <Pane prefHeight="720.0" prefWidth="654.0" style="-fx-background-color: white;" visible="false" />
+      <Pane fx:id="menuPane" prefHeight="720.0" prefWidth="654.0" style="-fx-background-color: white;">
+         <children>
+            <Label layoutX="222.0" layoutY="55.0" text="MENU">
+               <font>
+                  <Font name="Comic Sans MS" size="69.0" />
+               </font>
+            </Label>
+            <Button layoutX="230.0" layoutY="250.0" mnemonicParsing="false" onAction="#startLocalGame" prefHeight="48.0" prefWidth="194.0" text="LOCAL PLAY" />
+            <Button layoutX="230.0" layoutY="320.0" mnemonicParsing="false" onAction="#startOnline" prefHeight="48.0" prefWidth="194.0" text="ONLINE PLAY" />
+            <Button layoutX="230.0" layoutY="390.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="SPECTATE" />
+            <Button layoutX="230.0" layoutY="460.0" mnemonicParsing="false" onAction="#closeGame" prefHeight="48.0" prefWidth="194.0" text="EXIT" />
+         </children></Pane>
+      <Pane prefHeight="720.0" prefWidth="654.0" style="-fx-background-color: white;">
+         <children>
+            <Button layoutX="230.0" layoutY="250.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="PLAY" />
+            <Label layoutX="249.0" layoutY="50.0" prefHeight="40.0" prefWidth="180.0" text="online play" />
+            <Label layoutX="76.0" layoutY="109.0" text="player name:" />
+            <Button layoutX="230.0" layoutY="320.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="CHANGE NAME" />
+            <Button layoutX="230.0" layoutY="390.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="LEADERBOARD" />
+            <Button layoutX="230.0" layoutY="460.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="BACK" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
