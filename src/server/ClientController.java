@@ -1,6 +1,6 @@
 package server;
 
-import tictactoe.Controller;
+import tictactoe.MainController;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -9,9 +9,9 @@ public class ClientController extends Thread{
 
 
     private static Socket socket;
-    private final Controller controller;
+    private final MainController controller;
 
-    public ClientController(Controller controller) {
+    public ClientController(MainController controller) {
         this.controller = controller;
         try {
             socket = new Socket("localhost", Hub.PORT);

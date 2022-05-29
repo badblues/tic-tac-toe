@@ -5,12 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import server.ClientController;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,11 +15,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import static java.lang.Thread.sleep;
-
-public class Controller implements Initializable {
-
-    private GameState gameState = GameState.getInstance();
+public class GameController {
+    private final GameState gameState = GameState.getInstance();
 
     @FXML
     Button button0;
@@ -64,22 +58,18 @@ public class Controller implements Initializable {
 
     @FXML
     Label label;
-    @FXML
-    Pane menuPane;
-
 
     ArrayList<Button> buttons;
     ArrayList<ImageView> images;
     Thread autoplayThread;
     long AUTOPLAY_DELAY = 500;
+    MainController mainController;
 
-    ClientController clientController;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(MainController controller) {
+        mainController = controller;
         buttons = new ArrayList<>(Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8));
         images = new ArrayList<>(Arrays.asList(image0, image1, image2, image3, image4, image5, image6, image7, image8));
-        startAutoplay();
     }
 
     public void buttonPress(ActionEvent actionEvent) {
@@ -87,6 +77,18 @@ public class Controller implements Initializable {
         int id = Integer.parseInt(button.getId().substring(6));
         activateCell(id);
         checkGameOver();
+    }
+    public void resetGame() {
+        gameState.restart();
+        images.forEach(imageView -> {imageView.setImage(new Image("/empty.png"));});
+        buttons.forEach(button -> {button.setDisable(false);});
+        label.setText("TIC-TAC-TOE");
+    }
+
+    public void openMenu() {
+        mainController.openMainMenu();
+        resetGame();
+        startAutoplay();
     }
 
     public void activateCell(int id) {
@@ -102,49 +104,7 @@ public class Controller implements Initializable {
         gameState.nextTurn();
     }
 
-    private boolean checkGameOver() {
-        int winner = gameState.gameWinner();
-        if (winner == 0)
-            return false;
-        if (winner == 1) {
-            label.setText("CROSSES WON!");
-        } else if (winner == 2) {
-            label.setText("NULLS WON!");
-        }
-        buttons.forEach(button -> {button.setDisable(true);});
-        return true;
-    }
-
-    public void resetGame() {
-        gameState.restart();
-        images.forEach(imageView -> {imageView.setImage(new Image("/empty.png"));});
-        buttons.forEach(button -> {button.setDisable(false);});
-        label.setText("TIC-TAC-TOE");
-    }
-
-    public void startLocalGame() {
-        menuPane.setVisible(false);
-        resetGame();
-        endAutoplay();
-    }
-
-    public void startOnline() {
-        if (clientController == null)
-            clientController = new ClientController(this);
-    }
-
-    public void openMenu() {
-        menuPane.setVisible(true);
-        resetGame();
-        startAutoplay();
-    }
-
-    public void closeGame() {
-        Platform.exit();
-        System.exit(0);
-    }
-
-    private void startAutoplay() {
+    public void startAutoplay() {
         autoplayThread = new Thread(() -> {
             long lastTime = System.currentTimeMillis();
             Random rand = new Random();
@@ -174,11 +134,24 @@ public class Controller implements Initializable {
         autoplayThread.start();
     }
 
-    private void endAutoplay() {
+    public void endAutoplay() {
         if (autoplayThread != null) {
             autoplayThread.interrupt();
             autoplayThread = null;
         }
+    }
+
+    private boolean checkGameOver() {
+        int winner = gameState.gameWinner();
+        if (winner == 0)
+            return false;
+        if (winner == 1) {
+            label.setText("CROSSES WON!");
+        } else if (winner == 2) {
+            label.setText("NULLS WON!");
+        }
+        buttons.forEach(button -> {button.setDisable(true);});
+        return true;
     }
 
 }
