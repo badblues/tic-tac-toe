@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainMenuAnchorPane" prefHeight="720.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.MainMenuController">
+<AnchorPane fx:id="mainMenuAnchorPane" prefHeight="720.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.MainMenuController">
    <children>
       <Pane prefHeight="720.0" prefWidth="640.0" style="-fx-background-color: grey;">
          <children>
@@ -17,8 +17,7 @@
             </Label>
             <Button layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#toLocalGame" prefHeight="48.0" prefWidth="194.0" text="LOCAL PLAY" />
             <Button layoutX="220.0" layoutY="320.0" mnemonicParsing="false" onAction="#toOnlineMenu" prefHeight="48.0" prefWidth="194.0" text="ONLINE PLAY" />
-            <Button layoutX="220.0" layoutY="390.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="194.0" text="SPECTATE" />
-            <Button layoutX="220.0" layoutY="460.0" mnemonicParsing="false" onAction="#closeGame" prefHeight="48.0" prefWidth="194.0" text="EXIT" />
+            <Button layoutX="220.0" layoutY="390.0" mnemonicParsing="false" onAction="#closeGame" prefHeight="48.0" prefWidth="194.0" text="EXIT" />
          </children>
       </Pane>
    </children>

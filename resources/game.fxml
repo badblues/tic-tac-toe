@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.GameController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.GameController">
    <children>
       <GridPane gridLinesVisible="true" layoutX="710.0" layoutY="110.0" prefHeight="500.0" prefWidth="500.0">
          <columnConstraints>
@@ -44,12 +43,12 @@
             <Button fx:id="button8" mnemonicParsing="false" onAction="#buttonPress" opacity="0.0" prefHeight="165.0" prefWidth="165.0" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <Button fx:id="resetButton" layoutX="230.0" layoutY="250.0" mnemonicParsing="false" onAction="#resetGame" prefHeight="48.0" prefWidth="194.0" text="RESET" />
+      <Button fx:id="resetButton" layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#resetGame" prefHeight="48.0" prefWidth="194.0" text="RESET" />
       <Label fx:id="label" layoutX="710.0" layoutY="10.0" prefHeight="97.0" prefWidth="666.0" text="TIC-TAC-TOE" textAlignment="CENTER">
          <font>
             <Font name="Comic Sans MS" size="46.0" />
          </font>
       </Label>
-      <Button layoutX="230.0" layoutY="320.0" mnemonicParsing="false" onAction="#openMenu" prefHeight="48.0" prefWidth="194.0" text="MENU" />
+      <Button layoutX="220.0" layoutY="320.0" mnemonicParsing="false" onAction="#openMenu" prefHeight="48.0" prefWidth="194.0" text="MENU" />
    </children>
 </AnchorPane>

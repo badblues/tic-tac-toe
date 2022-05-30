@@ -1,17 +1,18 @@
 package tictactoe;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MultiplayerWindow {
+public class MultiplayerWindowController {
 
+    MainController mainController;
     Stage stage;
-    public MultiplayerWindow() {
+    public MultiplayerWindowController(MainController controller) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app.fxml"));
+            mainController = controller;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/multiplayerWindow.fxml"));
             Parent root = loader.load();
             stage = new Stage();
             stage.setScene(new Scene(root));
