@@ -5,15 +5,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MultiplayerWindowController {
+public class MultiplayerWindow{
 
-    MainController mainController;
+    MultiplayerWindowController multiplayerWindowController;
     Stage stage;
-    public MultiplayerWindowController(MainController controller) {
+    public MultiplayerWindow() {
         try {
-            mainController = controller;
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/multiplayerWindow.fxml"));
             Parent root = loader.load();
+            multiplayerWindowController = loader.getController();
             stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setResizable(false);
@@ -22,8 +22,12 @@ public class MultiplayerWindowController {
         }
     }
 
-    public void show() {
-        stage.show();
+    public Stage getStage() {
+        return stage;
+    }
+
+    public MultiplayerWindowController getMultiplayerWindowController() {
+        return multiplayerWindowController;
     }
 
 }

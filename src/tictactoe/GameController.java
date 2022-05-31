@@ -70,6 +70,7 @@ public class GameController {
         mainController = controller;
         buttons = new ArrayList<>(Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8));
         images = new ArrayList<>(Arrays.asList(image0, image1, image2, image3, image4, image5, image6, image7, image8));
+        startAutoplay();
     }
 
     public void buttonPress(ActionEvent actionEvent) {

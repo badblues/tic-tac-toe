@@ -1,26 +1,40 @@
 package tictactoe;
 
-import javafx.fxml.Initializable;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import server.ClientController;
 
-public class MultiplayerWindowController implements Initializable {
+public class MultiplayerWindowController {
+
+    @FXML
+    ComboBox<Integer> opponentComboBox;
 
     MainController mainController;
     MultiplayerWindow multiplayerWindow;
 
-    public MultiplayerWindowController(MainController controller) {
+    public void initialize(MainController controller, MultiplayerWindow multiplayerWindow) {
         mainController = controller;
-        multiplayerWindow = new MultiplayerWindow();
+        this.multiplayerWindow = multiplayerWindow;
     }
 
     public void show() {
-        multiplayerWindow.show();
+        multiplayerWindow.getStage().show();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    public void startGame() {
+        if (opponentComboBox.getValue() != null)
+            mainController.requestOnlineGame(opponentComboBox.getValue());
     }
+
+    public void updateClients() {
+        opponentComboBox.getItems().clear();
+        for (Integer client : ClientController.getClients())
+            if (client != ClientController.getClientId()) {
+                opponentComboBox.getItems().add(client);
+            }
+    }
+
+
+
 }

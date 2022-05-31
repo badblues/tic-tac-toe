@@ -25,7 +25,8 @@ public class MainMenuController {
     }
 
     public void toOnlineMenu() {
-
+        mainMenuAnchorPane.setVisible(false);
+        mainController.openOnlineMenu();
     }
 
     public void closeGame() {
