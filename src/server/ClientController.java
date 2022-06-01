@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import server.packages.ClientsPackage;
 import server.packages.GamePackage;
 import tictactoe.MainController;
+import util.Game;
 
 import java.io.*;
 import java.net.Socket;
@@ -13,6 +14,7 @@ public class ClientController extends Thread{
 
     private final MainController mainController;
     private static ArrayList<Integer> clients;
+    private static ArrayList<Game> games;
     private static int id;
     private static Socket socket;
     ObjectInputStream oin;
@@ -26,14 +28,12 @@ public class ClientController extends Thread{
 
     public void run() {
         while (true) {
-            //System.out.println(connected);
             if (connected) {
                 try {
-                    System.out.println("законнектился и жду");
                     Object readObject = oin.readObject();
-                    System.out.println("got object");
                     if (readObject instanceof ClientsPackage clientsPackage) {
                         clients = clientsPackage.getClients();
+                        games = clientsPackage.getGames();
                         id = clientsPackage.getId();
                     } else if (readObject instanceof GamePackage gamePackage) {
                         System.out.println("got gamePackage: " + gamePackage.getMessage());
@@ -59,6 +59,9 @@ public class ClientController extends Thread{
                                 Platform.runLater(() -> {
                                     mainController.gameRematch();
                                 });
+                                break;
+                            case "GAME_SPECTATE":
+                                mainController.spectatePackage(gamePackage);
                                 break;
                         }
                     }
@@ -108,6 +111,15 @@ public class ClientController extends Thread{
         }
     }
 
+    public void sendGameSpectator(Game game) {
+        try {
+            oout.reset();
+            oout.writeObject(game);
+            oout.flush();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void connectToServer() {
         try {
@@ -135,6 +147,10 @@ public class ClientController extends Thread{
 
     public static ArrayList<Integer> getClients() {
         return clients;
+    }
+
+    public static ArrayList<Game> getGames() {
+        return games;
     }
 
     public static int getClientId() {

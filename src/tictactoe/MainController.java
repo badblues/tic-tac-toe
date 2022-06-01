@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import server.ClientController;
 import server.packages.GamePackage;
+import util.Game;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -94,6 +95,19 @@ public class MainController implements Initializable {
 
     public void showGameDeclined() {
         onlineMenuController.showGameDeclined();
+    }
+
+    public void startSpectate(Game game) {
+        clientController.sendGameSpectator(game);
+        onlineMenuController.hideMenu();
+        gameController.endAutoplay();
+        gameController.resetGame();
+        gameController.hideResetButton();
+    }
+
+    public void spectatePackage(GamePackage gamePackage) {
+        System.out.println("spectating package");
+        gameController.readBoard(gamePackage);
     }
 
     public void closeOnlineGame() {

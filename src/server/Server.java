@@ -13,7 +13,7 @@ public class Server {
     static final int PORT = 4999;
     static int lastClientId =1;
     static ArrayList<EchoThread> threadList = new ArrayList<>();
-    static ArrayList<Game> gamesList = new ArrayList<>();
+    static ArrayList<Game> games = new ArrayList<>();
 
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
@@ -48,7 +48,7 @@ public class Server {
         ArrayList<Integer> array = new ArrayList<>();
         for (EchoThread thread : threadList) {
             boolean flag = true;
-            for(Game pair : gamesList)
+            for(Game pair : games)
                 if (pair.hasId(thread.getClientId()))
                     flag = false;
             if (flag)
@@ -58,16 +58,40 @@ public class Server {
         return array;
     }
 
+    public static ArrayList<Game> getGames() {
+        return games;
+    }
+
     public static void addGame(int id1, int id2) {
-        gamesList.add(new Game(id1, id2));
+        games.add(new Game(id1, id2));
         sendClientsUpdate();
-        System.out.println("game list: " + gamesList);
     }
 
     public static void removeGame(int id1, int ignoredId2) {
-        gamesList.removeIf(pair -> (pair.hasId(id1)));
+        games.removeIf(pair -> (pair.hasId(id1)));
         sendClientsUpdate();
-        System.out.println("game list: " + gamesList);
+    }
+
+    public static void addSpectator(Game game) {
+        for (Game game1 : games) {
+            if (game1.getId1() == game.getId1() && game1.getId2() == game.getId2()) {
+                game1.setSpectators(game.getSpectators());
+            }
+        }
+        System.out.println("added speCTATOR 1111111");
+        sendClientsUpdate();
+    }
+
+    public static void sendToSpectators(GamePackage gamePackage) {
+        gamePackage.setMessage("GAME_SPECTATE");
+        games.forEach(game -> {
+            if (game.hasId(gamePackage.getSender()))
+                for (Integer spectator : game.getSpectators())
+                    for (EchoThread echoThread : threadList)
+                        if (echoThread.getClientId() == spectator)
+                            echoThread.sendGamePackage(gamePackage);
+        });
+        gamePackage.setMessage("GAME_TURN");
     }
 
     private static void sendClientsUpdate() {

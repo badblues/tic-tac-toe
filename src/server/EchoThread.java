@@ -2,6 +2,7 @@ package server;
 
 import server.packages.ClientsPackage;
 import server.packages.GamePackage;
+import util.Game;
 
 import java.io.*;
 import java.net.Socket;
@@ -37,9 +38,13 @@ public class EchoThread extends Thread {
                         case "GAME_END":
                             Server.removeGame(gamePackage.getSender(), gamePackage.getReceiver());
                             break;
+                        case "GAME_TURN":
+                            Server.sendToSpectators(gamePackage);
                     }
                     System.out.println("got game Package:" + gamePackage.getMessage());
                     Server.transferGamePackage(gamePackage);
+                } else if (readObject instanceof Game game) {
+                    Server.addSpectator(game);
                 }
             } catch (IOException e) {
                 lostConnection();
@@ -52,7 +57,7 @@ public class EchoThread extends Thread {
 
     public void updateClientsList() {
         System.out.println("sent clients update");
-        ClientsPackage clientsPackage = new ClientsPackage(Server.getClients(), id);
+        ClientsPackage clientsPackage = new ClientsPackage(Server.getClients(), Server.getGames(), id);
         try {
             oout.reset();
             oout.writeObject(clientsPackage);

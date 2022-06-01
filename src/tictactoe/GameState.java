@@ -7,10 +7,10 @@ import java.util.Arrays;
 
 public class GameState {
 
-    static GameState instance;
-    ArrayList<Integer> board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-    int turn = 0;
-    int lastTurnCellId = -1;
+    private static GameState instance;
+    private ArrayList<Integer> board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+    private int turn = 0;
+    private int lastTurnCellId = -1;
 
     public GameState() {
     }

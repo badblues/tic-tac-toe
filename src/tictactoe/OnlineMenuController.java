@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.layout.AnchorPane;
 import server.ClientController;
+import util.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,21 @@ public class OnlineMenuController {
     }
 
     public void startSpectate() {
-
+        ArrayList<String> choices = new ArrayList<>();
+        for (Game game : ClientController.getGames())
+            choices.add(game.getString());
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("SPECTATE");
+        dialog.setHeaderText("WHO TO WATCH??");
+        dialog.setContentText("Choose match:");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            for (Game game : ClientController.getGames())
+                if (game.getString().equals(result.get())) {
+                    game.getSpectators().add(ClientController.getClientId());
+                    mainController.startSpectate(game);
+                }
+        }
     }
 
     public void changeName() {

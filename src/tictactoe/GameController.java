@@ -136,10 +136,8 @@ public class GameController {
         hideResetButton();
         disableAllButtons();
         if (coinflipWin()) {
-            System.out.println("making first turn");
             nextTurnOnlineGame(null);
         } else {
-            System.out.println("passing turn");
             passTurn();
         }
     }
@@ -158,11 +156,23 @@ public class GameController {
         mainController.sendGamePackage(gamePackage);
         disableAllButtons();
         if (coinflipWin()) {
-            System.out.println("making first turn");
             nextTurnOnlineGame(null);
         } else {
-            System.out.println("passing turn");
             passTurn();
+        }
+    }
+
+    public void readBoard(GamePackage gamePackage) {
+        resetGame();
+        disableAllButtons();
+        gameState.readGamePackage(gamePackage);
+        for (int i = 0; i < 9; i++) {
+            System.out.println(gameState.getBoard());
+            if (gameState.getBoard().get(i) == 1) {
+                images.get(i).setImage(new Image("/cross.png"));
+            } else if (gameState.getBoard().get(i) == 2) {
+                images.get(i).setImage(new Image("/nought.png"));
+            }
         }
     }
 
@@ -275,7 +285,6 @@ public class GameController {
     }
 
     private void enableSomeButtons() {
-        System.out.println("buttons enabled");
         for (int i = 0; i < 9; i++) {
             if (gameState.getBoard().get(i) == 0) {
                 buttons.get(i).setDisable(false);
@@ -284,7 +293,6 @@ public class GameController {
     }
 
     public void disableAllButtons() {
-        System.out.println("buttons disabled");
         buttons.forEach(button -> button.setDisable(true));
     }
 
