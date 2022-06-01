@@ -22,6 +22,10 @@ public class MultiplayerWindowController {
         multiplayerWindow.getStage().show();
     }
 
+    public void hide() {
+        multiplayerWindow.getStage().hide();
+    }
+
     public void startGame() {
         if (opponentComboBox.getValue() != null)
             mainController.requestOnlineGame(opponentComboBox.getValue());

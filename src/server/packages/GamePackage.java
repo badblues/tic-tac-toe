@@ -9,6 +9,7 @@ public class GamePackage implements Serializable {
     int sender;
     String message;
     ArrayList<Integer> board = new ArrayList<>();
+    int lastTurnCell = -1;
     int turn = 0;
 
     public GamePackage(int sender, int reciever, String message) {
@@ -21,16 +22,24 @@ public class GamePackage implements Serializable {
         board = array;
     }
 
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
     public ArrayList<Integer> getBoard() {
         return board;
     }
 
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
     public int getTurn() {
         return turn;
+    }
+
+    public void setLastTurnCell(int cell) {
+        lastTurnCell = cell;
+    }
+
+    public int getLastTurnCell() {
+        return lastTurnCell;
     }
 
     public int getReceiver() {

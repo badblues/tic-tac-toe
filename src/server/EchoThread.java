@@ -4,9 +4,7 @@ import server.packages.ClientsPackage;
 import server.packages.GamePackage;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class EchoThread extends Thread {
 
@@ -32,7 +30,7 @@ public class EchoThread extends Thread {
             try {
                 Object readObject = oin.readObject();
                 if (readObject instanceof GamePackage gamePackage) {
-                    System.out.println("got game Package");
+                    System.out.println("got game Package:" + gamePackage.getMessage());
                     Hub.transferGamePackage(gamePackage);
                 }
             } catch (IOException e) {
@@ -50,7 +48,6 @@ public class EchoThread extends Thread {
             oout.reset();
             oout.writeObject(clientsPackage);
             oout.flush();
-            System.out.println("sent update" + clientsPackage.getClients().toString());
         } catch(IOException e) {
             e.printStackTrace();
         }

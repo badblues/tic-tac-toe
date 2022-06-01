@@ -1,9 +1,12 @@
 package tictactoe;
 
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import server.ClientController;
+import server.packages.GamePackage;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -62,14 +65,30 @@ public class MainController implements Initializable {
 
     public void acceptGame(int requestSenderId) {
         clientController.sendGameResponse(requestSenderId, "GAME_ACCEPT");
+        onlineMenuController.hideMenu();
+        gameController.endAutoplay();
+        gameController.disableAllButtons();
+        gameController.setOnlineGame(true);
     }
 
     public void declineGame(int requestSenderId) {
         clientController.sendGameResponse(requestSenderId, "GAME_DECLINE");
     }
 
-    public void startOnlineGame() {
+    public void startOnlineGame(int id1, int id2) {
+        onlineMenuController.hideMenu();
+        multiplayerWindowController.hide();
+        gameController.startOnlineGame(id1, id2);
+    }
 
+    public void sendGamePackage(GamePackage gamePackage) {
+        clientController.sendGamePackage(gamePackage);
+    }
+
+    public void getGamePackage(GamePackage gamePackage) {
+        Platform.runLater(() -> {
+            gameController.nextTurnOnlineGame(gamePackage);
+        });
     }
 
     public void showGameDeclined() {

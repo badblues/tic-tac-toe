@@ -4,16 +4,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import server.packages.GamePackage;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class GameController {
     private final GameState gameState = GameState.getInstance();
@@ -64,6 +64,9 @@ public class GameController {
     Thread autoplayThread;
     long AUTOPLAY_DELAY = 500;
     MainController mainController;
+    int id1 = -1;
+    int id2 = -1;
+    boolean onlineGame = false;
 
 
     public void initialize(MainController controller) {
@@ -74,11 +77,105 @@ public class GameController {
     }
 
     public void buttonPress(ActionEvent actionEvent) {
-        Button button = (Button) actionEvent.getSource();  //getting pressed button
+        Button button = (Button) actionEvent.getSource();
         int id = Integer.parseInt(button.getId().substring(6));
         activateCell(id);
         checkGameOver();
+        if (onlineGame) {
+            turnMade();
+        }
     }
+    public void activateCell(int id) {
+        System.out.println(Thread.currentThread().getName());
+        System.out.println("activating:" + id);;
+        buttons.get(id).setDisable(true);
+        if (gameState.getTurn() % 2 == 0) {
+            images.get(id).setImage(new Image("/cross.png"));
+            gameState.getBoard().set(id, 1);
+        }
+        else {
+            images.get(id).setImage(new Image("/nought.png"));
+            gameState.getBoard().set(id, 2);
+        }
+        gameState.setLastTurnCellId(id);
+        gameState.nextTurn();
+    }
+
+    public void nextTurnOnlineGame(GamePackage gamePackage) {
+        if (gamePackage != null) {
+            if (gamePackage.getLastTurnCell() != -1)
+                activateCell(gamePackage.getLastTurnCell());
+            id1 = gamePackage.getReceiver();
+            id2 = gamePackage.getSender();
+            gameState.readGamePackage(gamePackage);
+        }
+        if (!checkGameOver()) {
+            enableSomeButtons();
+        }
+    }
+
+    private void turnMade() {
+        disableAllButtons();
+        passTurn();
+    }
+
+    public void passTurn() {
+        GamePackage gamePackage = gameState.writeGamePackage(id1, id2);
+        mainController.sendGamePackage(gamePackage);
+        System.out.println("turn passed");
+    }
+
+    public void startOnlineGame(int id1, int id2) {
+        this.id1 = id1;
+        this.id2 = id2;
+        onlineGame = true;
+        endAutoplay();
+        disableAllButtons();
+        if (coinflipWin()) {
+            System.out.println("making first turn");
+            nextTurnOnlineGame(null);
+        } else {
+            System.out.println("passing turn");
+            passTurn();
+        }
+    }
+
+    private boolean checkGameOver() {
+        int winner = gameState.gameWinner();
+        if (winner == 0)
+            return false;
+        if (winner == 1) {
+            label.setText("CROSSES WON!");
+        } else if (winner == 2) {
+            label.setText("NULLS WON!");
+        }
+        buttons.forEach(button -> {button.setDisable(true);});
+        return true;
+    }
+
+    private boolean coinflipWin() {
+        Random random = new Random();
+        boolean heads = random.nextBoolean();
+        boolean usersChoiseIsHeads = true;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("COINFLIP");
+        alert.setHeaderText(null);
+        alert.setContentText("Heads or tails?");
+
+        ButtonType headsButton = new ButtonType("HEADS");
+        ButtonType tailsButton = new ButtonType("TAILS");
+        alert.getButtonTypes().setAll(headsButton, tailsButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == headsButton){
+            usersChoiseIsHeads = true;
+        } else if (result.get() == tailsButton) {
+            usersChoiseIsHeads = false;
+        }
+        System.out.println("heads: " + heads);
+        return heads == usersChoiseIsHeads;
+    }
+
     public void resetGame() {
         gameState.restart();
         images.forEach(imageView -> {imageView.setImage(new Image("/empty.png"));});
@@ -90,19 +187,6 @@ public class GameController {
         mainController.openMainMenu();
         resetGame();
         startAutoplay();
-    }
-
-    public void activateCell(int id) {
-        buttons.get(id).setDisable(true);
-        if (gameState.getTurn() % 2 == 0) {
-            images.get(id).setImage(new Image("/cross.png"));
-            gameState.getBoard().set(id, 1);
-        }
-        else {
-            images.get(id).setImage(new Image("/nought.png"));
-            gameState.getBoard().set(id, 2);
-        }
-        gameState.nextTurn();
     }
 
     public void startAutoplay() {
@@ -140,19 +224,25 @@ public class GameController {
             autoplayThread.interrupt();
             autoplayThread = null;
         }
+        resetGame();
     }
 
-    private boolean checkGameOver() {
-        int winner = gameState.gameWinner();
-        if (winner == 0)
-            return false;
-        if (winner == 1) {
-            label.setText("CROSSES WON!");
-        } else if (winner == 2) {
-            label.setText("NULLS WON!");
+    public void disableAllButtons() {
+        System.out.println("buttons disabled");
+        buttons.forEach(button -> button.setDisable(true));
+    }
+
+    private void enableSomeButtons() {
+        System.out.println("buttons enabled");
+        for (int i = 0; i < 9; i++) {
+            if (gameState.getBoard().get(i) == 0) {
+                buttons.get(i).setDisable(false);
+            }
         }
-        buttons.forEach(button -> {button.setDisable(true);});
-        return true;
+    }
+
+    public void setOnlineGame(boolean boo) {
+        onlineGame = boo;
     }
 
 }

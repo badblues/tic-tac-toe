@@ -54,7 +54,6 @@ public class Hub {
     }
 
     public static void transferGamePackage(GamePackage gamePackage) {
-        System.out.println("transfered package");
         for (EchoThread thread : threadList)
             if (thread.getClientId() == gamePackage.getReceiver())
                 thread.sendGamePackage(gamePackage);

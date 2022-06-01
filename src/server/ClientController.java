@@ -1,5 +1,6 @@
 package server;
 
+import javafx.application.Platform;
 import server.packages.ClientsPackage;
 import server.packages.GamePackage;
 import tictactoe.MainController;
@@ -29,21 +30,21 @@ public class ClientController extends Thread{
                 try {
                     Object readObject = oin.readObject();
                     if (readObject instanceof ClientsPackage clientsPackage) {
-                        System.out.println("got clients update");
                         clients = clientsPackage.getClients();
                         id = clientsPackage.getId();
                         mainController.clientsUpdate();
                     } else if (readObject instanceof GamePackage gamePackage) {
-                        System.out.println("got gamePackage");
+                        System.out.println("got gamePackage: " + gamePackage.getMessage());
                         if (gamePackage.getMessage().equals("GAME_REQUEST")) {
-                            System.out.println("it's game request");
                             mainController.showGameRequest(gamePackage.getSender());
                         } else if (gamePackage.getMessage().equals("GAME_ACCEPT")) {
-                            System.out.println(gamePackage.getMessage());
-                            mainController.startOnlineGame();
+                            Platform.runLater(() -> {
+                                mainController.startOnlineGame(gamePackage.getReceiver(), gamePackage.getSender());
+                            });
                         } else if (gamePackage.getMessage().equals("GAME_DECLINE")) {
-                            System.out.println(gamePackage.getMessage());
                             mainController.showGameDeclined();
+                        } else if (gamePackage.getMessage().equals("GAME_TURN")) {
+                            mainController.getGamePackage(gamePackage);
                         }
                     }
                 } catch (IOException e) {
@@ -68,6 +69,16 @@ public class ClientController extends Thread{
 
     public void sendGameResponse(int requestSenderId, String response) {
         GamePackage gamePackage = new GamePackage(id, requestSenderId, response);
+        try {
+            oout.reset();
+            oout.writeObject(gamePackage);
+            oout.flush();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGamePackage(GamePackage gamePackage) {
         try {
             oout.reset();
             oout.writeObject(gamePackage);

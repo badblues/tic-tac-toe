@@ -1,5 +1,7 @@
 package tictactoe;
 
+import server.packages.GamePackage;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,6 +10,7 @@ public class GameState {
     static GameState instance;
     ArrayList<Integer> board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     int turn = 0;
+    int lastTurnCellId = -1;
 
     public GameState() {
     }
@@ -28,6 +31,14 @@ public class GameState {
 
     public void nextTurn() {
         turn++;
+    }
+
+    public void setLastTurnCellId(int cellId) {
+        lastTurnCellId = cellId;
+    }
+
+    public int getLastTurnCellId() {
+        return lastTurnCellId;
     }
 
     public int gameWinner() {
@@ -61,6 +72,20 @@ public class GameState {
     public void restart() {
         for (int i = 0; i < 9; i++)  board.set(i, 0);
         turn = 0;
+        lastTurnCellId = -1;
+    }
+
+    public void readGamePackage(GamePackage gamePackage) {
+        board = gamePackage.getBoard();
+        turn = gamePackage.getTurn();
+    }
+
+    public GamePackage writeGamePackage(int senderId, int recieverId) {
+        GamePackage gamePackage = new GamePackage(senderId, recieverId, "GAME_TURN");
+        gamePackage.setBoard(board);
+        gamePackage.setTurn(turn);
+        gamePackage.setLastTurnCell(lastTurnCellId);
+        return gamePackage;
     }
 
 }

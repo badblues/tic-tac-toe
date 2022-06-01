@@ -22,6 +22,10 @@ public class OnlineMenuController {
         onlineMenuAnchorPane.setVisible(true);
     }
 
+    public void hideMenu() {
+        onlineMenuAnchorPane.setVisible(false);
+    }
+
     public void backToMainMenu() {
         onlineMenuAnchorPane.setVisible(false);
         mainController.openMainMenu();
