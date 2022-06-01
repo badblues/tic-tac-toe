@@ -3,7 +3,6 @@ package tictactoe;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -12,7 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import server.packages.GamePackage;
 
-import java.net.URL;
 import java.util.*;
 
 public class GameController {
@@ -58,6 +56,10 @@ public class GameController {
 
     @FXML
     Label label;
+    @FXML
+    Button resetButton;
+    @FXML
+    Button rematchButton;
 
     ArrayList<Button> buttons;
     ArrayList<ImageView> images;
@@ -86,8 +88,6 @@ public class GameController {
         }
     }
     public void activateCell(int id) {
-        System.out.println(Thread.currentThread().getName());
-        System.out.println("activating:" + id);;
         buttons.get(id).setDisable(true);
         if (gameState.getTurn() % 2 == 0) {
             images.get(id).setImage(new Image("/cross.png"));
@@ -102,6 +102,7 @@ public class GameController {
     }
 
     public void nextTurnOnlineGame(GamePackage gamePackage) {
+        label.setText("YOUR TURN");
         if (gamePackage != null) {
             if (gamePackage.getLastTurnCell() != -1)
                 activateCell(gamePackage.getLastTurnCell());
@@ -117,12 +118,14 @@ public class GameController {
     private void turnMade() {
         disableAllButtons();
         passTurn();
+        if (!checkGameOver()) {
+            label.setText("OPPONENT'S TURN");
+        }
     }
 
     public void passTurn() {
         GamePackage gamePackage = gameState.writeGamePackage(id1, id2);
         mainController.sendGamePackage(gamePackage);
-        System.out.println("turn passed");
     }
 
     public void startOnlineGame(int id1, int id2) {
@@ -130,6 +133,29 @@ public class GameController {
         this.id2 = id2;
         onlineGame = true;
         endAutoplay();
+        hideResetButton();
+        disableAllButtons();
+        if (coinflipWin()) {
+            System.out.println("making first turn");
+            nextTurnOnlineGame(null);
+        } else {
+            System.out.println("passing turn");
+            passTurn();
+        }
+    }
+
+    public void endOnlineGame() {
+        showResetButton();
+        System.out.println("calling ending online game");
+        GamePackage gamePackage = new GamePackage(id1, id2, "GAME_END");
+        mainController.sendGamePackage(gamePackage);
+    }
+
+    public void rematch() {
+        rematchButton.setVisible(false);
+        resetGame();
+        GamePackage gamePackage = new GamePackage(id1, id2, "GAME_REMATCH");
+        mainController.sendGamePackage(gamePackage);
         disableAllButtons();
         if (coinflipWin()) {
             System.out.println("making first turn");
@@ -150,6 +176,9 @@ public class GameController {
             label.setText("NULLS WON!");
         }
         buttons.forEach(button -> {button.setDisable(true);});
+        if (onlineGame) {
+            rematchButton.setVisible(true);
+        }
         return true;
     }
 
@@ -172,7 +201,13 @@ public class GameController {
         } else if (result.get() == tailsButton) {
             usersChoiseIsHeads = false;
         }
-        System.out.println("heads: " + heads);
+
+        alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("COINFLIP");
+        alert.setHeaderText(null);
+        alert.setContentText("COIN: " + (heads? "HEADS" : "TAILS"));
+
+        alert.showAndWait();
         return heads == usersChoiseIsHeads;
     }
 
@@ -184,7 +219,19 @@ public class GameController {
     }
 
     public void openMenu() {
+        if (onlineGame) {
+            setOnlineGame(false);
+            endOnlineGame();
+        }
         mainController.openMainMenu();
+        resetGame();
+        startAutoplay();
+    }
+
+    public void closeOnlineGame() {
+        onlineGame = false;
+        mainController.openMainMenu();
+        showResetButton();
         resetGame();
         startAutoplay();
     }
@@ -227,11 +274,6 @@ public class GameController {
         resetGame();
     }
 
-    public void disableAllButtons() {
-        System.out.println("buttons disabled");
-        buttons.forEach(button -> button.setDisable(true));
-    }
-
     private void enableSomeButtons() {
         System.out.println("buttons enabled");
         for (int i = 0; i < 9; i++) {
@@ -239,6 +281,23 @@ public class GameController {
                 buttons.get(i).setDisable(false);
             }
         }
+    }
+
+    public void disableAllButtons() {
+        System.out.println("buttons disabled");
+        buttons.forEach(button -> button.setDisable(true));
+    }
+
+    public void hideResetButton() {
+        resetButton.setVisible(false);
+    }
+
+    public void showResetButton() {
+        resetButton.setVisible(true);
+    }
+
+    public void hideRematchButton() {
+        rematchButton.setVisible(false);
     }
 
     public void setOnlineGame(boolean boo) {

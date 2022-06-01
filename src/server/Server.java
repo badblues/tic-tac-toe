@@ -1,17 +1,19 @@
 package server;
 
 import server.packages.GamePackage;
+import util.Game;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Hub {
+public class Server {
 
     static final int PORT = 4999;
     static int lastClientId =1;
     static ArrayList<EchoThread> threadList = new ArrayList<>();
+    static ArrayList<Game> gamesList = new ArrayList<>();
 
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
@@ -29,6 +31,7 @@ public class Hub {
                 e.printStackTrace();
             }
             EchoThread thread = new EchoThread(socket, lastClientId++);
+            System.out.println("new connect");
             threadList.add(thread);
             thread.start();
             sendClientsUpdate();
@@ -43,14 +46,34 @@ public class Hub {
 
     public static ArrayList<Integer> getClients() {
         ArrayList<Integer> array = new ArrayList<>();
-        for (EchoThread thread : threadList)
-            array.add(thread.getClientId());
+        for (EchoThread thread : threadList) {
+            boolean flag = true;
+            for(Game pair : gamesList)
+                if (pair.hasId(thread.getClientId()))
+                    flag = false;
+            if (flag)
+                array.add(thread.getClientId());
+        }
+        System.out.println("Clients Array: " + array);
         return array;
     }
 
+    public static void addGame(int id1, int id2) {
+        gamesList.add(new Game(id1, id2));
+        sendClientsUpdate();
+        System.out.println("game list: " + gamesList);
+    }
+
+    public static void removeGame(int id1, int ignoredId2) {
+        gamesList.removeIf(pair -> (pair.hasId(id1)));
+        sendClientsUpdate();
+        System.out.println("game list: " + gamesList);
+    }
+
     private static void sendClientsUpdate() {
-        for (EchoThread thread : threadList)
+        for (EchoThread thread : threadList) {
             thread.updateClientsList();
+        }
     }
 
     public static void transferGamePackage(GamePackage gamePackage) {

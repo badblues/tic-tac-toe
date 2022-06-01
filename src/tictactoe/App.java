@@ -12,8 +12,8 @@ import javafx.stage.Stage;;
 //TODO: background play on menu +++
 //TODO: server connecting  +++
 //TODO: choosing who to play with +++
-//TODO: leaving current match
-//TODO: ability to continue playing after won game
+//TODO: leaving current match +++
+//TODO: ability to continue playing after won game +++
 //TODO: spectator mode
 //TODO: changing name before online games
 //TODO: leaderboards

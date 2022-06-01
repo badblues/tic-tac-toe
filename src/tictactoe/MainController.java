@@ -21,8 +21,6 @@ public class MainController implements Initializable {
 
     ClientController clientController;
 
-    MultiplayerWindow multiplayerWindow;
-    MultiplayerWindowController multiplayerWindowController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -30,9 +28,7 @@ public class MainController implements Initializable {
         gameController.initialize(this);
         onlineMenuController.initialize(this);
         clientController = new ClientController(this);
-        multiplayerWindow = new MultiplayerWindow();
-        multiplayerWindowController = multiplayerWindow.getMultiplayerWindowController();
-        multiplayerWindowController.initialize(this, multiplayerWindow);
+        clientController.start();
     }
 
     public void openMainMenu() {
@@ -43,11 +39,10 @@ public class MainController implements Initializable {
     public void openOnlineMenu() {
         onlineMenuController.showMenu();
         clientController.connectToServer();
-        clientController.start();
     }
 
     public void openMultiplayerWindow() {
-        multiplayerWindowController.show();
+        onlineMenuController.openPlayDialog();
     }
 
     public void startLocalGame() {
@@ -68,6 +63,7 @@ public class MainController implements Initializable {
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
         gameController.disableAllButtons();
+        gameController.hideResetButton();
         gameController.setOnlineGame(true);
     }
 
@@ -77,8 +73,13 @@ public class MainController implements Initializable {
 
     public void startOnlineGame(int id1, int id2) {
         onlineMenuController.hideMenu();
-        multiplayerWindowController.hide();
         gameController.startOnlineGame(id1, id2);
+    }
+
+    public void gameRematch() {
+        gameController.resetGame();
+        gameController.disableAllButtons();
+        gameController.hideRematchButton();
     }
 
     public void sendGamePackage(GamePackage gamePackage) {
@@ -95,8 +96,10 @@ public class MainController implements Initializable {
         onlineMenuController.showGameDeclined();
     }
 
-    public void clientsUpdate() {
-        multiplayerWindowController.updateClients();
+    public void closeOnlineGame() {
+        Platform.runLater(() -> {
+            gameController.closeOnlineGame();
+        });
     }
 
 }

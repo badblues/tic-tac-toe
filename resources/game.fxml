@@ -50,5 +50,6 @@
          </font>
       </Label>
       <Button layoutX="220.0" layoutY="320.0" mnemonicParsing="false" onAction="#openMenu" prefHeight="48.0" prefWidth="194.0" text="MENU" />
+      <Button fx:id="rematchButton" layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#rematch" prefHeight="48.0" prefWidth="194.0" text="REMATCH" visible="false" />
    </children>
 </AnchorPane>

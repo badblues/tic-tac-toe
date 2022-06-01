@@ -26,25 +26,40 @@ public class ClientController extends Thread{
 
     public void run() {
         while (true) {
+            //System.out.println(connected);
             if (connected) {
                 try {
+                    System.out.println("законнектился и жду");
                     Object readObject = oin.readObject();
+                    System.out.println("got object");
                     if (readObject instanceof ClientsPackage clientsPackage) {
                         clients = clientsPackage.getClients();
                         id = clientsPackage.getId();
-                        mainController.clientsUpdate();
                     } else if (readObject instanceof GamePackage gamePackage) {
                         System.out.println("got gamePackage: " + gamePackage.getMessage());
-                        if (gamePackage.getMessage().equals("GAME_REQUEST")) {
-                            mainController.showGameRequest(gamePackage.getSender());
-                        } else if (gamePackage.getMessage().equals("GAME_ACCEPT")) {
-                            Platform.runLater(() -> {
-                                mainController.startOnlineGame(gamePackage.getReceiver(), gamePackage.getSender());
-                            });
-                        } else if (gamePackage.getMessage().equals("GAME_DECLINE")) {
-                            mainController.showGameDeclined();
-                        } else if (gamePackage.getMessage().equals("GAME_TURN")) {
-                            mainController.getGamePackage(gamePackage);
+                        switch (gamePackage.getMessage()) {
+                            case "GAME_REQUEST":
+                                mainController.showGameRequest(gamePackage.getSender());
+                                break;
+                            case "GAME_ACCEPT":
+                                Platform.runLater(() -> {
+                                    mainController.startOnlineGame(gamePackage.getReceiver(), gamePackage.getSender());
+                                });
+                                break;
+                            case "GAME_DECLINE":
+                                mainController.showGameDeclined();
+                                break;
+                            case "GAME_TURN":
+                                mainController.getGamePackage(gamePackage);
+                                break;
+                            case "GAME_END":
+                                mainController.closeOnlineGame();
+                                break;
+                            case "GAME_REMATCH":
+                                Platform.runLater(() -> {
+                                    mainController.gameRematch();
+                                });
+                                break;
                         }
                     }
                 } catch (IOException e) {
@@ -52,6 +67,11 @@ public class ClientController extends Thread{
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -91,7 +111,7 @@ public class ClientController extends Thread{
 
     public void connectToServer() {
         try {
-            socket = new Socket("localhost", Hub.PORT);
+            socket = new Socket("localhost", Server.PORT);
             oin = new ObjectInputStream(socket.getInputStream());
             oout = new ObjectOutputStream(socket.getOutputStream());
             connected = true;
@@ -102,6 +122,7 @@ public class ClientController extends Thread{
     }
 
     public void disconnectFromServer() {
+        System.out.println("disconnecting from server");
         connected = false;
         if (socket != null) {
             try {

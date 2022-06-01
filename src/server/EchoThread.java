@@ -30,8 +30,16 @@ public class EchoThread extends Thread {
             try {
                 Object readObject = oin.readObject();
                 if (readObject instanceof GamePackage gamePackage) {
+                    switch(gamePackage.getMessage()) {
+                        case "GAME_ACCEPT":
+                            Server.addGame(gamePackage.getSender(), gamePackage.getReceiver());
+                            break;
+                        case "GAME_END":
+                            Server.removeGame(gamePackage.getSender(), gamePackage.getReceiver());
+                            break;
+                    }
                     System.out.println("got game Package:" + gamePackage.getMessage());
-                    Hub.transferGamePackage(gamePackage);
+                    Server.transferGamePackage(gamePackage);
                 }
             } catch (IOException e) {
                 lostConnection();
@@ -43,7 +51,8 @@ public class EchoThread extends Thread {
     }
 
     public void updateClientsList() {
-        ClientsPackage clientsPackage = new ClientsPackage(Hub.getClients(), id);
+        System.out.println("sent clients update");
+        ClientsPackage clientsPackage = new ClientsPackage(Server.getClients(), id);
         try {
             oout.reset();
             oout.writeObject(clientsPackage);
@@ -69,7 +78,7 @@ public class EchoThread extends Thread {
     }
 
     private void lostConnection() {
-        Hub.clientLost(id);
+        Server.clientLost(id);
     }
 
 }
