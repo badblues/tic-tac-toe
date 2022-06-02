@@ -36,12 +36,22 @@ public class EchoThread extends Thread {
                             Server.addGame(gamePackage.getSender(), gamePackage.getReceiver());
                             break;
                         case "GAME_END":
-                            Server.removeGame(gamePackage.getSender(), gamePackage.getReceiver());
+                            Server.removeGame(gamePackage.getSender());
                             break;
                         case "GAME_TURN":
+                            gamePackage.setMessage("GAME_SPECTATE");
                             Server.sendToSpectators(gamePackage);
+                            gamePackage.setMessage("GAME_TURN");
+                            break;
+                        case "GAME_REMATCH":
+                            gamePackage.setMessage("GAME_SPECTATE");
+                            Server.sendToSpectators(gamePackage);
+                            gamePackage.setMessage("GAME_REMATCH");
+                            break;
                     }
                     System.out.println("got game Package:" + gamePackage.getMessage());
+                    System.out.println("Clients:" + Server.getClients());
+                    System.out.println("Games:" + Server.getGames());
                     Server.transferGamePackage(gamePackage);
                 } else if (readObject instanceof Game game) {
                     Server.addSpectator(game);
@@ -56,7 +66,9 @@ public class EchoThread extends Thread {
     }
 
     public void updateClientsList() {
-        System.out.println("sent clients update");
+        System.out.println("updateClientsList");
+        System.out.println("Clients:" + Server.getClients());
+        System.out.println("Games:" + Server.getGames());
         ClientsPackage clientsPackage = new ClientsPackage(Server.getClients(), Server.getGames(), id);
         try {
             oout.reset();
@@ -72,7 +84,6 @@ public class EchoThread extends Thread {
             oout.reset();
             oout.writeObject(gamePackage);
             oout.flush();
-            System.out.println("sent gamePackage");
         } catch (IOException e) {
             e.printStackTrace();
         }

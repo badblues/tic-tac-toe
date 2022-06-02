@@ -103,6 +103,7 @@ public class MainController implements Initializable {
         gameController.endAutoplay();
         gameController.resetGame();
         gameController.hideResetButton();
+        gameController.disableAllButtons();
     }
 
     public void spectatePackage(GamePackage gamePackage) {

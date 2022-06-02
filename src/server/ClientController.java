@@ -47,7 +47,9 @@ public class ClientController extends Thread{
                                 });
                                 break;
                             case "GAME_DECLINE":
-                                mainController.showGameDeclined();
+                                Platform.runLater(() -> {
+                                    mainController.showGameDeclined();
+                                });
                                 break;
                             case "GAME_TURN":
                                 mainController.getGamePackage(gamePackage);
@@ -61,7 +63,9 @@ public class ClientController extends Thread{
                                 });
                                 break;
                             case "GAME_SPECTATE":
-                                mainController.spectatePackage(gamePackage);
+                                Platform.runLater(() -> {
+                                    mainController.spectatePackage(gamePackage);
+                            });
                                 break;
                         }
                     }

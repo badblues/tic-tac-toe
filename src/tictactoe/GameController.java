@@ -163,17 +163,23 @@ public class GameController {
     }
 
     public void readBoard(GamePackage gamePackage) {
-        resetGame();
-        disableAllButtons();
+        label.setText("TIC-TAC-TOE");
         gameState.readGamePackage(gamePackage);
         for (int i = 0; i < 9; i++) {
             System.out.println(gameState.getBoard());
-            if (gameState.getBoard().get(i) == 1) {
-                images.get(i).setImage(new Image("/cross.png"));
-            } else if (gameState.getBoard().get(i) == 2) {
-                images.get(i).setImage(new Image("/nought.png"));
+            switch(gameState.getBoard().get(i)) {
+                case 0:
+                    images.get(i).setImage(new Image("/empty.png"));
+                    break;
+                case 1:
+                    images.get(i).setImage(new Image("/cross.png"));
+                    break;
+                case 2:
+                    images.get(i).setImage(new Image("/nought.png"));
+                    break;
             }
         }
+        checkGameOver();
     }
 
     private boolean checkGameOver() {

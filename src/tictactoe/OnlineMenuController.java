@@ -43,20 +43,28 @@ public class OnlineMenuController {
     }
 
     public void startSpectate() {
-        ArrayList<String> choices = new ArrayList<>();
-        for (Game game : ClientController.getGames())
-            choices.add(game.getString());
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
-        dialog.setTitle("SPECTATE");
-        dialog.setHeaderText("WHO TO WATCH??");
-        dialog.setContentText("Choose match:");
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
+        if (!ClientController.getGames().isEmpty()) {
+            ArrayList<String> choices = new ArrayList<>();
             for (Game game : ClientController.getGames())
-                if (game.getString().equals(result.get())) {
-                    game.getSpectators().add(ClientController.getClientId());
-                    mainController.startSpectate(game);
-                }
+                choices.add(game.getString());
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+            dialog.setTitle("SPECTATE");
+            dialog.setHeaderText("WHO TO WATCH??");
+            dialog.setContentText("Choose match:");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                for (Game game : ClientController.getGames())
+                    if (game.getString().equals(result.get())) {
+                        game.getSpectators().add(ClientController.getClientId());
+                        mainController.startSpectate(game);
+                    }
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("SPECTATE");
+            alert.setHeaderText(null);
+            alert.setContentText("No available games :(");
+            alert.showAndWait();
         }
     }
 
@@ -85,13 +93,11 @@ public class OnlineMenuController {
     }
 
     public void showGameDeclined() {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game");
-            alert.setHeaderText(null);
-            alert.setContentText("Game wasn't accepted :(");
-            alert.showAndWait();
-        });
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game");
+        alert.setHeaderText(null);
+        alert.setContentText("Game wasn't accepted :(");
+        alert.showAndWait();
     }
 
     public void openPlayDialog() {

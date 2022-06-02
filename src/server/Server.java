@@ -40,6 +40,7 @@ public class Server {
 
     public static void clientLost(int id) {
         threadList.removeIf(ob -> (ob.getClientId() == id));
+        removeGame(id);
         sendClientsUpdate();
     }
 
@@ -67,7 +68,7 @@ public class Server {
         sendClientsUpdate();
     }
 
-    public static void removeGame(int id1, int ignoredId2) {
+    public static void removeGame(int id1) {
         games.removeIf(pair -> (pair.hasId(id1)));
         sendClientsUpdate();
     }
@@ -83,7 +84,6 @@ public class Server {
     }
 
     public static void sendToSpectators(GamePackage gamePackage) {
-        gamePackage.setMessage("GAME_SPECTATE");
         games.forEach(game -> {
             if (game.hasId(gamePackage.getSender()))
                 for (Integer spectator : game.getSpectators())
@@ -91,7 +91,6 @@ public class Server {
                         if (echoThread.getClientId() == spectator)
                             echoThread.sendGamePackage(gamePackage);
         });
-        gamePackage.setMessage("GAME_TURN");
     }
 
     private static void sendClientsUpdate() {
