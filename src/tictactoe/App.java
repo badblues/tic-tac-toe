@@ -14,7 +14,8 @@ import javafx.stage.Stage;;
 //TODO: choosing who to play with +++
 //TODO: leaving current match +++
 //TODO: ability to continue playing after won game +++
-//TODO: spectator mode
+//TODO: spectator mode +++
+//TODO: ingame chat
 //TODO: changing name before online games
 //TODO: leaderboards
 //TODO: redesign

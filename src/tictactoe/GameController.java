@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import server.packages.GamePackage;
+import util.packages.GamePackage;
 
 import java.util.*;
 
@@ -58,6 +58,8 @@ public class GameController {
     Label label;
     @FXML
     Button resetButton;
+    @FXML
+    Button menuButton;
     @FXML
     Button rematchButton;
 
@@ -164,6 +166,8 @@ public class GameController {
 
     public void readBoard(GamePackage gamePackage) {
         label.setText("TIC-TAC-TOE");
+        id1 = gamePackage.getSender();
+        id2 = gamePackage.getReceiver();
         gameState.readGamePackage(gamePackage);
         for (int i = 0; i < 9; i++) {
             System.out.println(gameState.getBoard());
@@ -308,6 +312,14 @@ public class GameController {
 
     public void showResetButton() {
         resetButton.setVisible(true);
+    }
+
+    public void hideMenuButton() {
+        menuButton.setVisible(false);
+    }
+
+    public void showMenuButton() {
+        menuButton.setVisible(true);
     }
 
     public void hideRematchButton() {

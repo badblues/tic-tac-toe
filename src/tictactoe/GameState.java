@@ -1,6 +1,6 @@
 package tictactoe;
 
-import server.packages.GamePackage;
+import util.packages.GamePackage;
 
 import java.util.ArrayList;
 import java.util.Arrays;

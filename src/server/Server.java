@@ -1,6 +1,6 @@
 package server;
 
-import server.packages.GamePackage;
+import util.packages.GamePackage;
 import util.Game;
 
 import java.io.IOException;

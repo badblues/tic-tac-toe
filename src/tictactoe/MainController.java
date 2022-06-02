@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import server.ClientController;
-import server.packages.GamePackage;
+import util.packages.GamePackage;
 import util.Game;
 
 import java.net.URL;
@@ -19,6 +19,8 @@ public class MainController implements Initializable {
     GameController gameController;
     @FXML
     OnlineMenuController onlineMenuController;
+    @FXML
+    ChatController chatController;
 
     ClientController clientController;
 
@@ -28,17 +30,22 @@ public class MainController implements Initializable {
         mainMenuController.initialize(this);
         gameController.initialize(this);
         onlineMenuController.initialize(this);
+        chatController.initialize(this);
         clientController = new ClientController(this);
         clientController.start();
     }
 
     public void openMainMenu() {
         mainMenuController.showMenu();
+        gameController.hideMenuButton();
+        gameController.hideResetButton();
         clientController.disconnectFromServer();
     }
 
     public void openOnlineMenu() {
         onlineMenuController.showMenu();
+        gameController.hideMenuButton();
+        gameController.hideResetButton();
         clientController.connectToServer();
     }
 
@@ -49,6 +56,8 @@ public class MainController implements Initializable {
     public void startLocalGame() {
         gameController.endAutoplay();
         gameController.resetGame();
+        gameController.showMenuButton();
+        gameController.showResetButton();
     }
 
     public void requestOnlineGame(int receiver) {
@@ -64,8 +73,10 @@ public class MainController implements Initializable {
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
         gameController.disableAllButtons();
+        gameController.showMenuButton();
         gameController.hideResetButton();
         gameController.setOnlineGame(true);
+        chatController.showChat();
     }
 
     public void declineGame(int requestSenderId) {
@@ -74,6 +85,7 @@ public class MainController implements Initializable {
 
     public void startOnlineGame(int id1, int id2) {
         onlineMenuController.hideMenu();
+        chatController.showChat();
         gameController.startOnlineGame(id1, id2);
     }
 
@@ -103,7 +115,9 @@ public class MainController implements Initializable {
         gameController.endAutoplay();
         gameController.resetGame();
         gameController.hideResetButton();
+        gameController.showMenuButton();
         gameController.disableAllButtons();
+        chatController.showChat();
     }
 
     public void spectatePackage(GamePackage gamePackage) {
@@ -114,7 +128,12 @@ public class MainController implements Initializable {
     public void closeOnlineGame() {
         Platform.runLater(() -> {
             gameController.closeOnlineGame();
+            chatController.hideChat();
         });
+    }
+
+    public GameController getGameController() {
+        return gameController;
     }
 
 }

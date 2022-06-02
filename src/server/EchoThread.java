@@ -1,7 +1,7 @@
 package server;
 
-import server.packages.ClientsPackage;
-import server.packages.GamePackage;
+import util.packages.ClientsPackage;
+import util.packages.GamePackage;
 import util.Game;
 
 import java.io.*;

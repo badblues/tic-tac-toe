@@ -1,4 +1,4 @@
-package server.packages;
+package util.packages;
 
 import java.io.Serializable;
 import java.util.ArrayList;

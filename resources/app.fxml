@@ -7,5 +7,6 @@
       <fx:include fx:id="game" source="game.fxml" />
       <fx:include fx:id="mainMenu" source="mainMenu.fxml" />
       <fx:include fx:id="onlineMenu" source="onlineMenu.fxml" />
+      <fx:include fx:id="chat" layoutX="50.0" layoutY="110.0" source="chat.fxml" />
    </children>
 </AnchorPane>

@@ -1,8 +1,8 @@
 package server;
 
 import javafx.application.Platform;
-import server.packages.ClientsPackage;
-import server.packages.GamePackage;
+import util.packages.ClientsPackage;
+import util.packages.GamePackage;
 import tictactoe.MainController;
 import util.Game;
 
