@@ -13,34 +13,27 @@ import javafx.util.Pair;
 import util.packages.GameResult;
 
 public class Server {
-    static int lastClientId = 1;
     static ArrayList<EchoThread> threads = new ArrayList<>();
     static ArrayList<Game> games = new ArrayList<>();
+    static int lastClientId = 1;
 
     private static DatabaseController databaseController;
 
     public static void main(String[] args) {
         databaseController = new DatabaseController();
-        ServerSocket serverSocket = null;
-        Socket socket = null;
-        try {
-            serverSocket = new ServerSocket(5000);
+        Socket socket;
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            while (true) {
+                socket = serverSocket.accept();
+                EchoThread thread = new EchoThread(socket, lastClientId++);
+                threads.add(thread);
+                thread.start();
+                sendClientsUpdate();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        while (true) {
-            try {
-                assert serverSocket != null : "Not connected";
-                socket = serverSocket.accept();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            EchoThread thread = new EchoThread(socket, lastClientId++);
-            System.out.println("new connect");
-            threads.add(thread);
-            thread.start();
-            sendClientsUpdate();
-        }
+
     }
 
     public static void clientLost(int id) {
@@ -49,25 +42,6 @@ public class Server {
         sendClientsUpdate();
     }
 
-
-    public static ArrayList<Pair<Integer, String>> getPlayers() {
-        ArrayList<Pair<Integer, String>> array = new ArrayList<>();
-        for (EchoThread thread : threads) {
-            boolean flag = true;
-            for (Game pair : games)
-                if (pair.hasId(thread.getClientId()))
-                    flag = false;
-            if (flag) {
-                array.add(new Pair<>(thread.getClientId(), thread.getClientName()));
-            }
-        }
-        System.out.println("Clients Array: " + array);
-        return array;
-    }
-
-    public static ArrayList<Game> getGames() {
-        return games;
-    }
 
     public static void addGame(int id1, int id2) {
         String name1 = "", name2 = "";
@@ -92,23 +66,20 @@ public class Server {
                 game1.setSpectators(game.getSpectators());
             }
         }
-        System.out.println("added speCTATOR 1111111");
         sendClientsUpdate();
     }
 
-    public static void checkNameUnicity(String name, int id) {
-        boolean duplicate = false;
-        for (EchoThread echoThread : threads)
-            if (echoThread.getClientName().equals(name) && echoThread.getClientId() != id)
-                duplicate = true;
-        if (duplicate) {
-            threads.forEach(echoThread -> {
-              if (echoThread.getClientId() == id)
-                  echoThread.sendObject("TAKEN");
-            });
-        } else {
-            databaseController.addPlayer(name);
+    static void sendClientsUpdate() {
+        for (EchoThread thread : threads) {
+            ClientsPackage clientsPackage = new ClientsPackage(getPlayers(), games, thread.getClientName(), thread.getClientId());
+            thread.sendObject(clientsPackage);
         }
+    }
+
+    public static void transferGamePackage(GamePackage gamePackage) {
+        for (EchoThread thread : threads)
+            if (thread.getClientId() == gamePackage.getReceiver())
+                thread.sendObject(gamePackage);
     }
 
     public static void sendToSpectators(GamePackage gamePackage) {
@@ -135,27 +106,45 @@ public class Server {
         });
     }
 
-    public static void saveGameResult(GameResult gameResult) {
-        databaseController.saveGameResult(gameResult);
-    }
-
     public static void sendLeaderboard(int id) {
         for (EchoThread echoThread : threads)
             if (echoThread.getClientId() == id)
                 echoThread.sendObject(databaseController.getLeaderboard());
     }
 
-    static void sendClientsUpdate() {
+    public static ArrayList<Pair<Integer, String>> getPlayers() {
+        ArrayList<Pair<Integer, String>> array = new ArrayList<>();
         for (EchoThread thread : threads) {
-            ClientsPackage clientsPackage = new ClientsPackage(getPlayers(), games, thread.getClientName(), thread.getClientId());
-            thread.sendObject(clientsPackage);
+            boolean flag = true;
+            for (Game pair : games)
+                if (pair.hasId(thread.getClientId()))
+                    flag = false;
+            if (flag) {
+                array.add(new Pair<>(thread.getClientId(), thread.getClientName()));
+            }
+        }
+        return array;
+    }
+
+    public static void checkNameUnicity(String name, int id) {
+        boolean duplicate = false;
+        for (EchoThread echoThread : threads)
+            if (echoThread.getClientName().equals(name) && echoThread.getClientId() != id) {
+                duplicate = true;
+                break;
+            }
+        if (duplicate) {
+            threads.forEach(echoThread -> {
+              if (echoThread.getClientId() == id)
+                  echoThread.sendObject("TAKEN");
+            });
+        } else {
+            databaseController.addPlayer(name);
         }
     }
 
-    public static void transferGamePackage(GamePackage gamePackage) {
-        for (EchoThread thread : threads)
-            if (thread.getClientId() == gamePackage.getReceiver())
-                thread.sendObject(gamePackage);
+    public static void saveGameResult(GameResult gameResult) {
+        databaseController.saveGameResult(gameResult);
     }
 
 }

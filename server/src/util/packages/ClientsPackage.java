@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 public class ClientsPackage implements Serializable {
 
-    private int id;
-    private String name;
-    private ArrayList<Pair<Integer, String>> players;
-    private ArrayList<Game> games;
+    private final int id;
+    private final String name;
+    private final ArrayList<Pair<Integer, String>> players;
+    private final ArrayList<Game> games;
 
 
     public ClientsPackage(ArrayList<Pair<Integer, String>> players, ArrayList<Game> games, String name, int id) {

@@ -1,4 +1,4 @@
-package tictactoe;
+package tictactoe.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
+import tictactoe.data.ClientData;
 
 import java.util.Optional;
 
@@ -32,8 +33,17 @@ public class MainMenuController {
 
     public void toOnlineMenu() {
         Pair<String, String> pair = showLoginDialog();
-        mainController.openOnlineMenu(pair.getKey(), pair.getValue());
-        mainMenuAnchorPane.setVisible(false);
+        if (pair != null) {
+            if (mainController.openOnlineMenu(pair.getKey(), pair.getValue()))
+                mainMenuAnchorPane.setVisible(false);
+            else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("CONNECT");
+                alert.setHeaderText(null);
+                alert.setContentText("COULDN'T CONNECT TO SERVER");
+                alert.showAndWait();
+            }
+        }
     }
 
     public Pair<String, String> showLoginDialog() {
@@ -48,19 +58,25 @@ public class MainMenuController {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-        TextField name = new TextField();
-        name.setText("Player");
-        TextField ip = new TextField();
-        ip.setText("localhost");
+        TextField nameField = new TextField();
+        nameField.setText("Player");
+        nameField.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (nameField.getText().length() > ClientData.getInstance().MAX_NAME_LENGTH) {
+                String s = nameField.getText().substring(0, ClientData.getInstance().MAX_NAME_LENGTH);
+                nameField.setText(s);
+            }
+        });
+        TextField ipField = new TextField();
+        ipField.setText("localhost");
 
         gridPane.add(new Label("Name:"), 0, 0);
-        gridPane.add(name, 1, 0);
+        gridPane.add(nameField, 1, 0);
         gridPane.add(new Label("IP:"), 0, 1);
-        gridPane.add(ip, 1, 1);
+        gridPane.add(ipField, 1, 1);
         dialog.getDialogPane().setContent(gridPane);
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                return new Pair<>(name.getText(), ip.getText());
+                return new Pair<>(nameField.getText(), ipField.getText());
             }
             return null;
         });
@@ -71,7 +87,7 @@ public class MainMenuController {
         return null;
     }
 
-    public void showNameTaken() {
+    public void showNameTakeAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("CONNECT");
         alert.setHeaderText(null);

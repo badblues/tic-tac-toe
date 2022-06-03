@@ -2,7 +2,7 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.MainController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #878f99;" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.controller.MainController">
    <children>
       <fx:include fx:id="game" source="game.fxml" />
       <fx:include fx:id="mainMenu" source="mainMenu.fxml" />

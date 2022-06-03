@@ -1,10 +1,11 @@
-package tictactoe;
+package tictactoe.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
+import tictactoe.data.ClientData;
 import util.Game;
 import util.packages.Leaderboard;
 
@@ -31,7 +32,7 @@ public class OnlineMenuController {
 
     public void showMenu() {
         onlineMenuAnchorPane.setVisible(true);
-        nameLabel.setText("PLAYER NAME: " + ClientController.getClientName());
+        nameLabel.setText("PLAYER NAME: " + ClientData.getInstance().getThisClientName());
     }
 
     public void hideMenu() {
@@ -44,13 +45,13 @@ public class OnlineMenuController {
     }
 
     public void startOnlinePlay() {
-        mainController.openMultiplayerWindow();
+        openStartGameDialog();
     }
 
     public void startSpectate() {
-        if (!ClientController.getGames().isEmpty()) {
+        if (!ClientData.getInstance().getGames().isEmpty()) {
             ArrayList<String> choices = new ArrayList<>();
-            for (Game game : ClientController.getGames())
+            for (Game game : ClientData.getInstance().getGames())
                 choices.add(game.getString());
             ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
             dialog.setTitle("SPECTATE");
@@ -58,9 +59,9 @@ public class OnlineMenuController {
             dialog.setContentText("Choose match:");
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                for (Game game : ClientController.getGames())
+                for (Game game : ClientData.getInstance().getGames())
                     if (game.getString().equals(result.get())) {
-                        game.getSpectators().add(ClientController.getClientId());
+                        game.getSpectators().add(ClientData.getInstance().getThisClientId());
                         mainController.startSpectate(game);
                     }
             }
@@ -75,7 +76,7 @@ public class OnlineMenuController {
 
     public void showLeaderboard() {
         if (!leaderboardPane.isVisible()) {
-            mainController.sendObject("LEADERBOARD");
+            ClientController.sendObject("LEADERBOARD");
             leaderboardPane.setVisible(true);
         } else {
             leaderboardPane.setVisible(false);
@@ -83,7 +84,7 @@ public class OnlineMenuController {
     }
 
     public void updateLeaderboard() {
-        Leaderboard leaderboard = ClientController.getLeaderboard();
+        Leaderboard leaderboard = ClientData.getInstance().getLeaderboard();
         leaderboardText.setText("  PLAYER/GAMES/WINS/LOSES/WINRATE\n");
         for (int i = 0; i < leaderboard.getRowsNumber(); i++) {
             leaderboardText.appendText(leaderboard.getString(i));
@@ -91,7 +92,7 @@ public class OnlineMenuController {
         }
     }
 
-    public void showGameAlert(String senderId) {
+    public void showGameRequestAlert(String senderId) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Game request");
@@ -99,15 +100,15 @@ public class OnlineMenuController {
             alert.setContentText("Accept?");
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 mainController.acceptGame(senderId);
-            } else {
+            } else  {
                 mainController.declineGame(senderId);
             }
         });
     }
 
-    public void showGameDeclined() {
+    public void showGameDeclinedAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game");
         alert.setHeaderText(null);
@@ -115,10 +116,10 @@ public class OnlineMenuController {
         alert.showAndWait();
     }
 
-    public void openPlayDialog() {
+    public void openStartGameDialog() {
             ArrayList<String> choices = new ArrayList<>();
-            for (Pair<Integer, String> player : ClientController.getPlayers())
-                if (player.getValue() != ClientController.getClientName())
+            for (Pair<Integer, String> player : ClientData.getInstance().getPlayers())
+                if (!player.getValue().equals(ClientData.getInstance().getThisClientName()))
                     choices.add(player.getValue());
         if (!choices.isEmpty()) {
             ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
@@ -127,7 +128,7 @@ public class OnlineMenuController {
             dialog.setContentText("Choose your opponent:");
 
             Optional<String> result = dialog.showAndWait();
-            result.ifPresent(integer -> mainController.requestOnlineGame(result.get()));
+            result.ifPresent(integer -> ClientController.sendGameRequest(result.get()));
 
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

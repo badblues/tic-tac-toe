@@ -1,9 +1,8 @@
-package tictactoe;
+package tictactoe.controller;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import util.packages.GamePackage;
+import tictactoe.data.ClientData;
 import util.Game;
 
 import java.net.URL;
@@ -12,9 +11,9 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     @FXML
-    MainMenuController mainMenuController;
-    @FXML
     GameController gameController;
+    @FXML
+    MainMenuController mainMenuController;
     @FXML
     OnlineMenuController onlineMenuController;
     @FXML
@@ -41,18 +40,12 @@ public class MainController implements Initializable {
         clientController.disconnectFromServer();
     }
 
-    public void openOnlineMenu(String name, String ip) {
-        clientController.connectToServer(name, ip);
-        onlineMenuController.showMenu();
-    }
-
-    public void nameTaken() {
-        openMainMenu();
-        mainMenuController.showNameTaken();
-    }
-
-    public void openMultiplayerWindow() {
-        onlineMenuController.openPlayDialog();
+    public boolean openOnlineMenu(String name, String ip) {
+        if (clientController.connectToServer(name, ip)) {
+            onlineMenuController.showMenu();
+            return true;
+        }
+        return false;
     }
 
     public void startLocalGame() {
@@ -62,16 +55,17 @@ public class MainController implements Initializable {
         gameController.showResetButton();
     }
 
-    public void requestOnlineGame(String receiver) {
-        clientController.sendGameRequest(receiver);
-    }
-
-    public void showGameRequest(String senderId) {
-        onlineMenuController.showGameAlert(senderId);
+    public void startOnlineGame(int id1, int id2) {
+        onlineMenuController.hideMenu();
+        chatController.showChat();
+        gameController.showMenuButton();
+        gameController.startOnlineGame(id1, id2);
     }
 
     public void acceptGame(String requestSenderName) {
-        gameController.setGame(new Game(ClientController.getClientId(), ClientController.getClientId(requestSenderName)));
+        int myId = ClientData.getInstance().getThisClientId();
+        int requestSenderId = ClientData.getInstance().getClientId(requestSenderName);
+        gameController.setGame(new Game(myId, requestSenderId));
         clientController.sendGameResponse(requestSenderName, "GAME_ACCEPT");
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
@@ -86,13 +80,6 @@ public class MainController implements Initializable {
         clientController.sendGameResponse(requestSenderName, "GAME_DECLINE");
     }
 
-    public void startOnlineGame(int id1, int id2) {
-        onlineMenuController.hideMenu();
-        chatController.showChat();
-        gameController.showMenuButton();
-        gameController.startOnlineGame(id1, id2);
-    }
-
 
     public void gameRematch() {
         gameController.resetGame();
@@ -100,18 +87,13 @@ public class MainController implements Initializable {
         gameController.hideRematchButton();
     }
 
-    public void getGamePackage(GamePackage gamePackage) {
-        Platform.runLater(() -> {
-            gameController.nextTurnOnlineGame(gamePackage);
-        });
-    }
-
-    public void showGameDeclined() {
-        onlineMenuController.showGameDeclined();
+    public void closeOnlineGame() {
+        gameController.closeOnlineGame();
+        chatController.hideChat();
     }
 
     public void startSpectate(Game game) {
-        clientController.sendObject(game);
+        ClientController.sendObject(game);
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
         gameController.resetGame();
@@ -122,20 +104,13 @@ public class MainController implements Initializable {
         chatController.showChat();
     }
 
-    public void spectatePackage(GamePackage gamePackage) {
-        System.out.println("spectating package");
-        gameController.readBoard(gamePackage);
+    public void nameTaken() {
+        openMainMenu();
+        mainMenuController.showNameTakeAlert();
     }
 
-    public void closeOnlineGame() {
-        Platform.runLater(() -> {
-            gameController.closeOnlineGame();
-            chatController.hideChat();
-        });
-    }
-
-    public void sendObject(Object object) {
-        clientController.sendObject(object);
+    public void showGameDeclined() {
+        onlineMenuController.showGameDeclinedAlert();
     }
 
     public GameController getGameController() {

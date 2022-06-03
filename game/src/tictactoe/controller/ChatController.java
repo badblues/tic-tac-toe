@@ -1,4 +1,4 @@
-package tictactoe;
+package tictactoe.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import tictactoe.data.ClientData;
 import util.Game;
 import util.packages.ChatMessage;
 
@@ -14,29 +15,29 @@ public class ChatController {
     @FXML
     TextArea chatText;
     @FXML
-    TextField chatField;
+    TextField inputField;
     @FXML
     AnchorPane chatPane;
 
-    private final int maxLength = 80;
+    private final int maxMessageLength = 80;
 
     MainController mainController;
 
     public void initialize(MainController controller) {
         mainController = controller;
-        chatField.textProperty().addListener((ov, oldValue, newValue) -> {
-            if (chatField.getText().length() > maxLength) {
-                String s = chatField.getText().substring(0, maxLength);
-                chatField.setText(s);
+        inputField.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (inputField.getText().length() > maxMessageLength) {
+                String s = inputField.getText().substring(0, maxMessageLength);
+                inputField.setText(s);
             }
         });
     }
 
     private void sendMessage() {
         Game game = mainController.getGameController().getGame();
-        ChatMessage message = new ChatMessage(ClientController.getClientName() + "", game, chatField.getText());
-        mainController.sendObject(message);
-        chatField.setText("");
+        ChatMessage message = new ChatMessage(ClientData.getInstance().getThisClientName() + "", game, inputField.getText());
+        ClientController.sendObject(message);
+        inputField.setText("");
     }
 
     public void readMessage(ChatMessage message) {

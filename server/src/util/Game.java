@@ -51,21 +51,6 @@ public class Game implements Serializable {
         return (id == sender | id == receiver);
     }
 
-    public void changeReceiver() {
-        int tmp = receiver;
-        receiver = sender;
-        sender = tmp;
-
-        String tmp1 = receiverName;
-        receiverName = senderName;
-        senderName = tmp1;
-    }
-
-    @Override
-    public String toString() {
-        return sender + " " + receiver;
-    }
-
     public String getString() {
         return senderName + " vs " + receiverName;
     }

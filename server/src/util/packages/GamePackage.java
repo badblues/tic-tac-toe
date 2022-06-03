@@ -13,8 +13,8 @@ public class GamePackage implements Serializable {
     int lastTurnCell = -1;
     int turn = 0;
 
-    public GamePackage(int sender, int reciever, String message) {
-        game = new Game(sender, reciever);
+    public GamePackage(int sender, int receiver, String message) {
+        game = new Game(sender, receiver);
         this.message = message;
     }
 
@@ -48,10 +48,6 @@ public class GamePackage implements Serializable {
 
     public int getSender() {
         return game.getSender();
-    }
-
-    public void changeReceiver() {
-        game.changeReceiver();
     }
 
     public String getMessage() {

@@ -1,4 +1,4 @@
-package tictactoe;
+package tictactoe.data;
 
 import util.Game;
 import util.packages.GamePackage;
@@ -13,8 +13,7 @@ public class GameState {
     private int turn = 0;
     private int lastTurnCellId = -1;
 
-    public GameState() {
-    }
+    private GameState() {}
 
     public static GameState getInstance() {
         if (instance == null)
@@ -38,12 +37,7 @@ public class GameState {
         lastTurnCellId = cellId;
     }
 
-    public int getLastTurnCellId() {
-        return lastTurnCellId;
-    }
-
     public int gameWinner() {
-        //returns 0 if none, 3 if draw
         int res = 0;
         for (int i = 0; i < 8; i++) {
             ArrayList<Integer> comb = new ArrayList<>();

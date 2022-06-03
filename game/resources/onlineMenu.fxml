@@ -5,11 +5,18 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="onlineMenuAnchorPane" prefHeight="720.0" prefWidth="640.0" visible="false" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.OnlineMenuController">
+<AnchorPane fx:id="onlineMenuAnchorPane" prefHeight="720.0" prefWidth="640.0" style="-fx-background-color: #878f99;" visible="false" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.controller.OnlineMenuController">
    <children>
-      <Label layoutX="147.0" layoutY="116.0" prefHeight="40.0" prefWidth="180.0" text="online play" />
-      <Label fx:id="nameLabel" layoutX="147.0" layoutY="175.0" text="player name:" />
+      <Label layoutX="161.0" layoutY="33.0" prefHeight="65.0" prefWidth="318.0" text="ONLINE PLAY" textFill="WHITE">
+         <font>
+            <Font name="Comic Sans MS" size="46.0" />
+         </font></Label>
+      <Label fx:id="nameLabel" layoutX="44.0" layoutY="123.0" text="PLAYER NAME:" textFill="WHITE">
+         <font>
+            <Font name="Comic Sans MS" size="32.0" />
+         </font></Label>
       <Button layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#startOnlinePlay" prefHeight="48.0" prefWidth="194.0" text="PLAY" />
       <Button layoutX="220.0" layoutY="320.0" mnemonicParsing="false" onAction="#showLeaderboard" prefHeight="48.0" prefWidth="194.0" text="LEADERBOARD" />
       <Button layoutX="220.0" layoutY="390.0" mnemonicParsing="false" onAction="#startSpectate" prefHeight="48.0" prefWidth="194.0" text="SPECTATE" />

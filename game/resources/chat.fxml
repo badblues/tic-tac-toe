@@ -3,10 +3,17 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chatPane" prefHeight="400.0" prefWidth="600.0" visible="false" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.ChatController">
+<AnchorPane fx:id="chatPane" prefHeight="400.0" prefWidth="600.0" visible="false" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.controller.ChatController">
    <children>
-      <TextArea fx:id="chatText" editable="false" prefHeight="374.0" prefWidth="600.0" />
-      <TextField fx:id="chatField" layoutY="374.0" onKeyPressed="#keyEvent" prefHeight="25.0" prefWidth="600.0" />
+      <TextArea fx:id="chatText" editable="false" prefHeight="374.0" prefWidth="600.0">
+         <font>
+            <Font name="Leelawadee" size="20.0" />
+         </font></TextArea>
+      <TextField fx:id="inputField" layoutY="374.0" onKeyPressed="#keyEvent" prefHeight="25.0" prefWidth="600.0">
+         <font>
+            <Font name="Leelawadee" size="20.0" />
+         </font></TextField>
    </children>
 </AnchorPane>

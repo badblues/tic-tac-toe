@@ -33,7 +33,6 @@ public class DatabaseController {
     }
 
     public void addPlayer(String name) {
-        System.out.println("database adding player");
         try {
             statement.executeUpdate("USE tictactoe");
             ResultSet resultSet = statement.executeQuery("SELECT EXISTS(SELECT * FROM " + tablename + " WHERE player_name = '" + name + "');");
@@ -52,8 +51,6 @@ public class DatabaseController {
     public void saveGameResult(GameResult gameResult) {
         savePlayerResult(gameResult.getName1(), gameResult.getResult1());
         savePlayerResult(gameResult.getName2(), gameResult.getResult2());
-        System.out.println("GAME RESULT: " + gameResult.getName1() + " " + gameResult.getResult1());
-        System.out.println("GAME RESULT: " + gameResult.getName2() + " " + gameResult.getResult2());
     }
 
     private void savePlayerResult(String name, String result) {
