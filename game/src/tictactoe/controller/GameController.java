@@ -236,6 +236,7 @@ public class GameController {
         showResetButton();
         GamePackage gamePackage = new GamePackage(game.getSender(), game.getReceiver(), "GAME_END");
         ClientController.sendObject(gamePackage);
+        mainController.getChatController().resetChat();
     }
 
     public void closeOnlineGame() {

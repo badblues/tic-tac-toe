@@ -44,6 +44,10 @@ public class ChatController {
         chatText.appendText("\n" + message.getSender() + ": " + message.getMessage());
     }
 
+    public void resetChat() {
+        chatText.setText("");
+    }
+
     public void keyEvent(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER)
             sendMessage();
