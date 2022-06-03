@@ -1,4 +1,4 @@
-package util.packages;
+package util.transferObjects;
 
 import javafx.util.Pair;
 import util.Game;

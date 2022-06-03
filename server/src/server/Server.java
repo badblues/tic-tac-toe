@@ -1,8 +1,8 @@
 package server;
 
-import util.packages.ChatMessage;
-import util.packages.ClientsPackage;
-import util.packages.GamePackage;
+import util.transferObjects.ChatMessage;
+import util.transferObjects.ClientsPackage;
+import util.transferObjects.GamePackage;
 import util.Game;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import javafx.util.Pair;
-import util.packages.GameResult;
+import util.transferObjects.GameResult;
 
 public class Server {
     static ArrayList<EchoThread> threads = new ArrayList<>();

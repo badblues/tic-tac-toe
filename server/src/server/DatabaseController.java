@@ -1,7 +1,7 @@
 package server;
 
-import util.packages.GameResult;
-import util.packages.Leaderboard;
+import util.transferObjects.GameResult;
+import util.transferObjects.Leaderboard;
 
 import java.io.FileReader;
 import java.io.IOException;

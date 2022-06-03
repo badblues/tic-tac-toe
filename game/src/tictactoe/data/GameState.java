@@ -1,7 +1,7 @@
 package tictactoe.data;
 
 import util.Game;
-import util.packages.GamePackage;
+import util.transferObjects.GamePackage;
 
 import java.util.ArrayList;
 import java.util.Arrays;

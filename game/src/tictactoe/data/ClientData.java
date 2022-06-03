@@ -2,7 +2,7 @@ package tictactoe.data;
 
 import javafx.util.Pair;
 import util.Game;
-import util.packages.Leaderboard;
+import util.transferObjects.Leaderboard;
 
 import java.util.ArrayList;
 

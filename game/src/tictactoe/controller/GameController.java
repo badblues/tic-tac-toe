@@ -12,8 +12,8 @@ import javafx.scene.image.ImageView;
 import tictactoe.data.ClientData;
 import tictactoe.data.GameState;
 import util.Game;
-import util.packages.GamePackage;
-import util.packages.GameResult;
+import util.transferObjects.GamePackage;
+import util.transferObjects.GameResult;
 
 import java.util.*;
 

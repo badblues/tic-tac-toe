@@ -2,10 +2,10 @@ package tictactoe.controller;
 
 import javafx.application.Platform;
 import tictactoe.data.ClientData;
-import util.packages.ChatMessage;
-import util.packages.ClientsPackage;
-import util.packages.GamePackage;
-import util.packages.Leaderboard;
+import util.transferObjects.ChatMessage;
+import util.transferObjects.ClientsPackage;
+import util.transferObjects.GamePackage;
+import util.transferObjects.Leaderboard;
 
 import java.io.*;
 import java.net.Socket;

@@ -8,7 +8,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import tictactoe.data.ClientData;
 import util.Game;
-import util.packages.ChatMessage;
+import util.transferObjects.ChatMessage;
 
 public class ChatController {
 

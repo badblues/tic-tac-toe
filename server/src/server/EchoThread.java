@@ -1,9 +1,9 @@
 package server;
 
-import util.packages.ChatMessage;
-import util.packages.GamePackage;
+import util.transferObjects.ChatMessage;
+import util.transferObjects.GamePackage;
 import util.Game;
-import util.packages.GameResult;
+import util.transferObjects.GameResult;
 
 import java.io.*;
 import java.net.Socket;

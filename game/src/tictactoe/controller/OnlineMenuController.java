@@ -7,7 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 import tictactoe.data.ClientData;
 import util.Game;
-import util.packages.Leaderboard;
+import util.transferObjects.Leaderboard;
 
 import java.util.ArrayList;
 import java.util.Optional;
