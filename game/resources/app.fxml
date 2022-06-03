@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.MainController">
+   <children>
+      <fx:include fx:id="game" source="game.fxml" />
+      <fx:include fx:id="mainMenu" source="mainMenu.fxml" />
+      <fx:include fx:id="onlineMenu" source="onlineMenu.fxml" />
+      <fx:include fx:id="chat" layoutX="50.0" layoutY="110.0" source="chat.fxml" />
+   </children>
+</AnchorPane>

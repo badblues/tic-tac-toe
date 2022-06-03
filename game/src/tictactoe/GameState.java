@@ -1,5 +1,6 @@
 package tictactoe;
 
+import util.Game;
 import util.packages.GamePackage;
 
 import java.util.ArrayList;
@@ -80,8 +81,8 @@ public class GameState {
         turn = gamePackage.getTurn();
     }
 
-    public GamePackage writeGamePackage(int senderId, int recieverId) {
-        GamePackage gamePackage = new GamePackage(senderId, recieverId, "GAME_TURN");
+    public GamePackage writeGamePackage(Game game) {
+        GamePackage gamePackage = new GamePackage(game.getSender(), game.getReceiver(), "GAME_TURN");
         gamePackage.setBoard(board);
         gamePackage.setTurn(turn);
         gamePackage.setLastTurnCell(lastTurnCellId);

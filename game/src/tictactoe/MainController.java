@@ -1,10 +1,8 @@
 package tictactoe;
 
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import server.ClientController;
 import util.packages.GamePackage;
 import util.Game;
 
@@ -39,14 +37,18 @@ public class MainController implements Initializable {
         mainMenuController.showMenu();
         gameController.hideMenuButton();
         gameController.hideResetButton();
+        onlineMenuController.hideMenu();
         clientController.disconnectFromServer();
     }
 
-    public void openOnlineMenu() {
+    public void openOnlineMenu(String name, String ip) {
+        clientController.connectToServer(name, ip);
         onlineMenuController.showMenu();
-        gameController.hideMenuButton();
-        gameController.hideResetButton();
-        clientController.connectToServer();
+    }
+
+    public void nameTaken() {
+        openMainMenu();
+        mainMenuController.showNameTaken();
     }
 
     public void openMultiplayerWindow() {
@@ -60,16 +62,17 @@ public class MainController implements Initializable {
         gameController.showResetButton();
     }
 
-    public void requestOnlineGame(int receiver) {
+    public void requestOnlineGame(String receiver) {
         clientController.sendGameRequest(receiver);
     }
 
-    public void showGameRequest(int senderId) {
+    public void showGameRequest(String senderId) {
         onlineMenuController.showGameAlert(senderId);
     }
 
-    public void acceptGame(int requestSenderId) {
-        clientController.sendGameResponse(requestSenderId, "GAME_ACCEPT");
+    public void acceptGame(String requestSenderName) {
+        gameController.setGame(new Game(ClientController.getClientId(), ClientController.getClientId(requestSenderName)));
+        clientController.sendGameResponse(requestSenderName, "GAME_ACCEPT");
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
         gameController.disableAllButtons();
@@ -79,24 +82,22 @@ public class MainController implements Initializable {
         chatController.showChat();
     }
 
-    public void declineGame(int requestSenderId) {
-        clientController.sendGameResponse(requestSenderId, "GAME_DECLINE");
+    public void declineGame(String requestSenderName) {
+        clientController.sendGameResponse(requestSenderName, "GAME_DECLINE");
     }
 
     public void startOnlineGame(int id1, int id2) {
         onlineMenuController.hideMenu();
         chatController.showChat();
+        gameController.showMenuButton();
         gameController.startOnlineGame(id1, id2);
     }
+
 
     public void gameRematch() {
         gameController.resetGame();
         gameController.disableAllButtons();
         gameController.hideRematchButton();
-    }
-
-    public void sendGamePackage(GamePackage gamePackage) {
-        clientController.sendGamePackage(gamePackage);
     }
 
     public void getGamePackage(GamePackage gamePackage) {
@@ -110,13 +111,14 @@ public class MainController implements Initializable {
     }
 
     public void startSpectate(Game game) {
-        clientController.sendGameSpectator(game);
+        clientController.sendObject(game);
         onlineMenuController.hideMenu();
         gameController.endAutoplay();
         gameController.resetGame();
         gameController.hideResetButton();
         gameController.showMenuButton();
         gameController.disableAllButtons();
+        gameController.setGame(game);
         chatController.showChat();
     }
 
@@ -132,8 +134,20 @@ public class MainController implements Initializable {
         });
     }
 
+    public void sendObject(Object object) {
+        clientController.sendObject(object);
+    }
+
     public GameController getGameController() {
         return gameController;
+    }
+
+    public ChatController getChatController() {
+        return chatController;
+    }
+
+    public OnlineMenuController getOnlineMenuController()  {
+        return onlineMenuController;
     }
 
 }

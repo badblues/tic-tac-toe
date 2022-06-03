@@ -1,8 +1,10 @@
 package server;
 
+import util.packages.ChatMessage;
 import util.packages.ClientsPackage;
 import util.packages.GamePackage;
 import util.Game;
+import util.packages.GameResult;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,6 +12,7 @@ import java.net.Socket;
 public class EchoThread extends Thread {
 
     private final int id;
+    private String name = "unnamed";
     private final Socket socket;
     ObjectOutputStream oout;
     ObjectInputStream oin;
@@ -36,6 +39,7 @@ public class EchoThread extends Thread {
                             Server.addGame(gamePackage.getSender(), gamePackage.getReceiver());
                             break;
                         case "GAME_END":
+                            Server.sendToSpectators(gamePackage);
                             Server.removeGame(gamePackage.getSender());
                             break;
                         case "GAME_TURN":
@@ -50,11 +54,23 @@ public class EchoThread extends Thread {
                             break;
                     }
                     System.out.println("got game Package:" + gamePackage.getMessage());
-                    System.out.println("Clients:" + Server.getClients());
+                    System.out.println("Clients:" + Server.getPlayers());
                     System.out.println("Games:" + Server.getGames());
                     Server.transferGamePackage(gamePackage);
                 } else if (readObject instanceof Game game) {
                     Server.addSpectator(game);
+                } else if (readObject instanceof ChatMessage message) {
+                    Server.sendChatMessage(message);
+                } else if (readObject instanceof String string) {
+                    if (string.equals("LEADERBOARD")) {
+                        Server.sendLeaderboard(id);
+                    } else {
+                        this.name = string;
+                        Server.checkNameUnicity(name, id);
+                        Server.sendClientsUpdate();
+                    }
+                } else if (readObject instanceof GameResult gameResult) {
+                    Server.saveGameResult(gameResult);
                 }
             } catch (IOException e) {
                 lostConnection();
@@ -65,24 +81,10 @@ public class EchoThread extends Thread {
         }
     }
 
-    public void updateClientsList() {
-        System.out.println("updateClientsList");
-        System.out.println("Clients:" + Server.getClients());
-        System.out.println("Games:" + Server.getGames());
-        ClientsPackage clientsPackage = new ClientsPackage(Server.getClients(), Server.getGames(), id);
+    public void sendObject(Object object) {
         try {
             oout.reset();
-            oout.writeObject(clientsPackage);
-            oout.flush();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendGamePackage(GamePackage gamePackage) {
-        try {
-            oout.reset();
-            oout.writeObject(gamePackage);
+            oout.writeObject(object);
             oout.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,6 +93,10 @@ public class EchoThread extends Thread {
 
     public int getClientId() {
         return id;
+    }
+
+    public String getClientName() {
+        return name;
     }
 
     private void lostConnection() {

@@ -2,23 +2,27 @@ package tictactoe;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import server.ClientController;
+import javafx.util.Pair;
 import util.Game;
+import util.packages.Leaderboard;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class OnlineMenuController {
 
     @FXML
     AnchorPane onlineMenuAnchorPane;
-    MainController mainController;
+    @FXML
+    Label nameLabel;
+    @FXML
+    TitledPane leaderboardPane;
+    @FXML
+    TextArea leaderboardText;
 
+    MainController mainController;
 
 
     public void initialize(MainController controller) {
@@ -27,14 +31,15 @@ public class OnlineMenuController {
 
     public void showMenu() {
         onlineMenuAnchorPane.setVisible(true);
+        nameLabel.setText("PLAYER NAME: " + ClientController.getClientName());
     }
 
     public void hideMenu() {
         onlineMenuAnchorPane.setVisible(false);
+        leaderboardPane.setVisible(false);
     }
 
     public void backToMainMenu() {
-        onlineMenuAnchorPane.setVisible(false);
         mainController.openMainMenu();
     }
 
@@ -68,23 +73,33 @@ public class OnlineMenuController {
         }
     }
 
-    public void changeName() {
-
+    public void showLeaderboard() {
+        if (!leaderboardPane.isVisible()) {
+            mainController.sendObject("LEADERBOARD");
+            leaderboardPane.setVisible(true);
+        } else {
+            leaderboardPane.setVisible(false);
+        }
     }
 
-    public void toLeaderboard() {
-
+    public void updateLeaderboard() {
+        Leaderboard leaderboard = ClientController.getLeaderboard();
+        leaderboardText.setText("  PLAYER/GAMES/WINS/LOSES/WINRATE\n");
+        for (int i = 0; i < leaderboard.getRowsNumber(); i++) {
+            leaderboardText.appendText(leaderboard.getString(i));
+            leaderboardText.appendText("\n");
+        }
     }
 
-    public void showGameAlert(int senderId) {
+    public void showGameAlert(String senderId) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Game request");
-            alert.setHeaderText("You've been invited to a game with Player " + senderId);
+            alert.setHeaderText("You've been invited to a game with: " + senderId);
             alert.setContentText("Accept?");
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 mainController.acceptGame(senderId);
             } else {
                 mainController.declineGame(senderId);
@@ -101,19 +116,26 @@ public class OnlineMenuController {
     }
 
     public void openPlayDialog() {
-        ArrayList<Integer> choices = new ArrayList<>();
-        for (Integer client : ClientController.getClients())
-            if (client != ClientController.getClientId())
-            choices.add(client);
+            ArrayList<String> choices = new ArrayList<>();
+            for (Pair<Integer, String> player : ClientController.getPlayers())
+                if (player.getValue() != ClientController.getClientName())
+                    choices.add(player.getValue());
+        if (!choices.isEmpty()) {
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+            dialog.setTitle("PLAY");
+            dialog.setHeaderText("WHO TO PLAY WITH");
+            dialog.setContentText("Choose your opponent:");
 
-        ChoiceDialog<Integer> dialog = new ChoiceDialog<>(choices.get(0), choices);
-        dialog.setTitle("PLAY");
-        dialog.setHeaderText("WHO TO PLAY WITH");
-        dialog.setContentText("Choose your opponent:");
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(integer -> mainController.requestOnlineGame(result.get()));
 
-        Optional<Integer> result = dialog.showAndWait();
-        result.ifPresent(integer -> mainController.requestOnlineGame(result.get()));
-
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("SPECTATE");
+            alert.setHeaderText(null);
+            alert.setContentText("No available players :(");
+            alert.showAndWait();
+        }
     }
 
 }

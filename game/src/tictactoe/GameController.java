@@ -9,7 +9,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import util.Game;
 import util.packages.GamePackage;
+import util.packages.GameResult;
 
 import java.util.*;
 
@@ -68,8 +70,7 @@ public class GameController {
     Thread autoplayThread;
     long AUTOPLAY_DELAY = 500;
     MainController mainController;
-    int id1 = -1;
-    int id2 = -1;
+    Game game;
     boolean onlineGame = false;
 
 
@@ -87,6 +88,7 @@ public class GameController {
         checkGameOver();
         if (onlineGame) {
             turnMade();
+            checkGameResult();
         }
     }
     public void activateCell(int id) {
@@ -108,8 +110,7 @@ public class GameController {
         if (gamePackage != null) {
             if (gamePackage.getLastTurnCell() != -1)
                 activateCell(gamePackage.getLastTurnCell());
-            id1 = gamePackage.getReceiver();
-            id2 = gamePackage.getSender();
+            game = new Game(gamePackage.getReceiver(), gamePackage.getSender());
             gameState.readGamePackage(gamePackage);
         }
         if (!checkGameOver()) {
@@ -126,13 +127,12 @@ public class GameController {
     }
 
     public void passTurn() {
-        GamePackage gamePackage = gameState.writeGamePackage(id1, id2);
-        mainController.sendGamePackage(gamePackage);
+        GamePackage gamePackage = gameState.writeGamePackage(game);
+        mainController.sendObject(gamePackage);
     }
 
     public void startOnlineGame(int id1, int id2) {
-        this.id1 = id1;
-        this.id2 = id2;
+        game = new Game(id1, id2);
         onlineGame = true;
         endAutoplay();
         hideResetButton();
@@ -147,15 +147,16 @@ public class GameController {
     public void endOnlineGame() {
         showResetButton();
         System.out.println("calling ending online game");
-        GamePackage gamePackage = new GamePackage(id1, id2, "GAME_END");
-        mainController.sendGamePackage(gamePackage);
+        GamePackage gamePackage = new GamePackage(game.getSender(), game.getReceiver(), "GAME_END");
+        mainController.sendObject(gamePackage);
     }
 
     public void rematch() {
         rematchButton.setVisible(false);
+        GamePackage gamePackage = gameState.writeGamePackage(game);
+        gamePackage.setMessage("GAME_REMATCH");
         resetGame();
-        GamePackage gamePackage = new GamePackage(id1, id2, "GAME_REMATCH");
-        mainController.sendGamePackage(gamePackage);
+        mainController.sendObject(gamePackage);
         disableAllButtons();
         if (coinflipWin()) {
             nextTurnOnlineGame(null);
@@ -166,8 +167,7 @@ public class GameController {
 
     public void readBoard(GamePackage gamePackage) {
         label.setText("TIC-TAC-TOE");
-        id1 = gamePackage.getSender();
-        id2 = gamePackage.getReceiver();
+        game = new Game(gamePackage.getSender(), gamePackage.getReceiver());
         gameState.readGamePackage(gamePackage);
         for (int i = 0; i < 9; i++) {
             System.out.println(gameState.getBoard());
@@ -195,7 +195,7 @@ public class GameController {
         } else if (winner == 2) {
             label.setText("NULLS WON!");
         }
-        buttons.forEach(button -> {button.setDisable(true);});
+        buttons.forEach(button -> button.setDisable(true));
         if (onlineGame) {
             rematchButton.setVisible(true);
         }
@@ -242,8 +242,11 @@ public class GameController {
         if (onlineGame) {
             setOnlineGame(false);
             endOnlineGame();
+            game = null;
         }
+        hideRematchButton();
         mainController.openMainMenu();
+        mainController.getChatController().hideChat();
         resetGame();
         startAutoplay();
     }
@@ -254,6 +257,26 @@ public class GameController {
         showResetButton();
         resetGame();
         startAutoplay();
+    }
+
+    public void checkGameResult() {
+        int winner = gameState.gameWinner();
+        if (winner == 0)
+            return;
+        Game thisGame = ClientController.getGameFromId(ClientController.getClientId());
+        String name1 = ClientController.getClientName();
+        String name2 = Objects.equals(thisGame.getReceiverName(), name1) ? thisGame.getSenderName() : thisGame.getReceiverName();
+        GameResult gameResult = new GameResult(name1, name2);
+        if (winner == 1 && gameState.getTurn() % 2 == 1) {
+            gameResult.setResults("WIN", "LOSE");
+            mainController.sendObject(gameResult);
+        } else if (winner == 2 && gameState.getTurn() % 2 == 0) {
+            gameResult.setResults("WIN", "LOSE");
+            mainController.sendObject(gameResult);
+        } else if (winner == 3) {
+            gameResult.setResults("DRAW", "DRAW");
+            mainController.sendObject(gameResult);
+        }
     }
 
     public void startAutoplay() {
@@ -328,6 +351,14 @@ public class GameController {
 
     public void setOnlineGame(boolean boo) {
         onlineGame = boo;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
 }

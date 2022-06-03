@@ -1,20 +1,20 @@
 package util.packages;
 
+import util.Game;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GamePackage implements Serializable {
 
-    int receiver;
-    int sender;
+    Game game;
     String message;
     ArrayList<Integer> board = new ArrayList<>();
     int lastTurnCell = -1;
     int turn = 0;
 
     public GamePackage(int sender, int reciever, String message) {
-        this.sender = sender;
-        this.receiver = reciever;
+        game = new Game(sender, reciever);
         this.message = message;
     }
 
@@ -43,17 +43,15 @@ public class GamePackage implements Serializable {
     }
 
     public int getReceiver() {
-        return receiver;
+        return game.getReceiver();
     }
 
     public int getSender() {
-        return sender;
+        return game.getSender();
     }
 
-    public void changeReciever() {
-        int tmp = receiver;
-        receiver = sender;
-        sender = tmp;
+    public void changeReceiver() {
+        game.changeReceiver();
     }
 
     public String getMessage() {

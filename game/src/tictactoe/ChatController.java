@@ -1,13 +1,12 @@
 package tictactoe;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import util.Game;
 import util.packages.ChatMessage;
 
 public class ChatController {
@@ -34,8 +33,14 @@ public class ChatController {
     }
 
     private void sendMessage() {
-        ChatMessage message = new ChatMessage();
-        mainController.getGameController().getId1();
+        Game game = mainController.getGameController().getGame();
+        ChatMessage message = new ChatMessage(ClientController.getClientName() + "", game, chatField.getText());
+        mainController.sendObject(message);
+        chatField.setText("");
+    }
+
+    public void readMessage(ChatMessage message) {
+        chatText.appendText("\n" + message.getSender() + ": " + message.getMessage());
     }
 
     public void keyEvent(KeyEvent keyEvent) {
